@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Wifi, Bluetooth, Moon, Sun, Volume2, VolumeX, Maximize } from "lucide-react"
+import { Wifi, Bluetooth, Moon, Sun, Volume2, VolumeX, Maximize, Music } from "lucide-react"
 
 interface ControlCenterProps {
   onClose: () => void
@@ -12,7 +12,7 @@ interface ControlCenterProps {
 }
 
 export default function ControlCenter({
-  onClose,
+  onClose: _onClose,
   isDarkMode,
   onToggleDarkMode,
   brightness,
@@ -23,17 +23,14 @@ export default function ControlCenter({
   const [volume, setVolume] = useState(75)
   const [isFullscreen, setIsFullscreen] = useState(false)
 
-  // Load WiFi state from localStorage
   useEffect(() => {
     const savedWifi = localStorage.getItem("wifiEnabled")
     if (savedWifi !== null) {
       setWifiEnabled(savedWifi === "true")
     }
 
-    // Check if we're in fullscreen mode
     setIsFullscreen(!!document.fullscreenElement)
 
-    // Add fullscreen change event listener
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement)
     }
@@ -45,14 +42,12 @@ export default function ControlCenter({
     }
   }, [])
 
-  // Update the Control Center to store WiFi state in localStorage
   const toggleWifi = () => {
     const newState = !wifiEnabled
     setWifiEnabled(newState)
     localStorage.setItem("wifiEnabled", newState.toString())
   }
 
-  // Toggle fullscreen mode
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch((err) => {
@@ -65,88 +60,140 @@ export default function ControlCenter({
     }
   }
 
+  const glassClass = isDarkMode ? "liquid-glass" : "liquid-glass-light"
+  const moduleClass = isDarkMode ? "liquid-glass-module" : "liquid-glass-module-light"
+  const textClass = isDarkMode ? "text-white" : "text-gray-800"
+  const subtextClass = isDarkMode ? "text-white/60" : "text-gray-500"
+  const sliderClass = isDarkMode ? "liquid-slider" : "liquid-slider liquid-slider-light"
+
   return (
     <div
-      className="fixed top-8 right-4 w-80 bg-gray-800/80 backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl z-40"
+      className={`fixed top-8 right-4 w-80 ${glassClass} rounded-3xl overflow-hidden z-40`}
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="p-4">
-        <div className="grid grid-cols-4 gap-3 mb-4">
-          <button
-            className={`flex flex-col items-center justify-center p-3 rounded-xl ${
-              wifiEnabled ? "bg-blue-500" : "bg-gray-700"
-            }`}
-            onClick={toggleWifi}
-          >
-            <Wifi className="w-6 h-6 text-white mb-1" />
-            <span className="text-white text-xs">Wi-Fi</span>
-          </button>
+      <div className="p-4 space-y-3">
+        {/* Connectivity Group - Wi-Fi & Bluetooth */}
+        <div className={`${moduleClass} p-3`}>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              className={`flex items-center gap-3 p-3 rounded-2xl transition-all ${
+                wifiEnabled ? "liquid-glass-active text-white" : isDarkMode ? "bg-white/5 text-white" : "bg-black/5 text-gray-700"
+              }`}
+              onClick={toggleWifi}
+            >
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                wifiEnabled ? "bg-white/20" : isDarkMode ? "bg-white/10" : "bg-black/10"
+              }`}>
+                <Wifi className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <div className="text-xs font-medium">Wi-Fi</div>
+                <div className={`text-[10px] ${wifiEnabled ? "text-white/70" : subtextClass}`}>
+                  {wifiEnabled ? "Home" : "Off"}
+                </div>
+              </div>
+            </button>
 
-          <button
-            className={`flex flex-col items-center justify-center p-3 rounded-xl ${
-              bluetoothEnabled ? "bg-blue-500" : "bg-gray-700"
-            }`}
-            onClick={() => setBluetoothEnabled(!bluetoothEnabled)}
-          >
-            <Bluetooth className="w-6 h-6 text-white mb-1" />
-            <span className="text-white text-xs">Bluetooth</span>
-          </button>
+            <button
+              className={`flex items-center gap-3 p-3 rounded-2xl transition-all ${
+                bluetoothEnabled ? "liquid-glass-active text-white" : isDarkMode ? "bg-white/5 text-white" : "bg-black/5 text-gray-700"
+              }`}
+              onClick={() => setBluetoothEnabled(!bluetoothEnabled)}
+            >
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                bluetoothEnabled ? "bg-white/20" : isDarkMode ? "bg-white/10" : "bg-black/10"
+              }`}>
+                <Bluetooth className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <div className="text-xs font-medium">Bluetooth</div>
+                <div className={`text-[10px] ${bluetoothEnabled ? "text-white/70" : subtextClass}`}>
+                  {bluetoothEnabled ? "On" : "Off"}
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
 
+        {/* Focus, Dark Mode, Fullscreen Row */}
+        <div className="grid grid-cols-3 gap-2">
           <button
-            className={`flex flex-col items-center justify-center p-3 rounded-xl ${
-              isDarkMode ? "bg-blue-500" : "bg-gray-700"
+            className={`${moduleClass} flex flex-col items-center justify-center p-3 rounded-2xl transition-all ${
+              isDarkMode ? "text-white" : "text-gray-700"
             }`}
             onClick={onToggleDarkMode}
           >
-            {isDarkMode ? <Moon className="w-6 h-6 text-white mb-1" /> : <Sun className="w-6 h-6 text-white mb-1" />}
-            <span className="text-white text-xs">{isDarkMode ? "Dark" : "Light"}</span>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${
+              isDarkMode ? "bg-indigo-500/60" : "bg-orange-400/40"
+            }`}>
+              {isDarkMode ? <Moon className="w-4 h-4 text-white" /> : <Sun className="w-4 h-4 text-orange-600" />}
+            </div>
+            <span className="text-[10px] font-medium">{isDarkMode ? "Dark" : "Light"}</span>
           </button>
 
           <button
-            className={`flex flex-col items-center justify-center p-3 rounded-xl ${
-              isFullscreen ? "bg-blue-500" : "bg-gray-700"
+            className={`${moduleClass} flex flex-col items-center justify-center p-3 rounded-2xl transition-all ${
+              isDarkMode ? "text-white" : "text-gray-700"
             }`}
             onClick={toggleFullscreen}
           >
-            <Maximize className="w-6 h-6 text-white mb-1" />
-            <span className="text-white text-xs">{isFullscreen ? "Exit" : "Fullscreen"}</span>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${
+              isFullscreen ? "bg-green-500/60" : isDarkMode ? "bg-white/10" : "bg-black/10"
+            }`}>
+              <Maximize className="w-4 h-4" />
+            </div>
+            <span className="text-[10px] font-medium">{isFullscreen ? "Exit" : "Fullscreen"}</span>
+          </button>
+
+          <button
+            className={`${moduleClass} flex flex-col items-center justify-center p-3 rounded-2xl transition-all ${
+              isDarkMode ? "text-white" : "text-gray-700"
+            }`}
+          >
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${
+              isDarkMode ? "bg-white/10" : "bg-black/10"
+            }`}>
+              <Music className="w-4 h-4" />
+            </div>
+            <span className="text-[10px] font-medium">Music</span>
           </button>
         </div>
 
-        <div className="bg-gray-700 rounded-xl p-3 mb-3">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-white text-sm">Display</span>
-            <span className="text-white text-sm">{brightness}%</span>
+        {/* Display Slider */}
+        <div className={`${moduleClass} p-4`}>
+          <div className={`flex items-center justify-between mb-3 ${textClass}`}>
+            <span className="text-sm font-medium">Display</span>
           </div>
-          <input
-            type="range"
-            min="10"
-            max="100"
-            value={brightness}
-            onChange={(e) => onBrightnessChange(Number.parseInt(e.target.value))}
-            className="w-full h-1 bg-gray-600 rounded-full appearance-none cursor-pointer"
-          />
+          <div className="flex items-center gap-3">
+            <Sun className={`w-4 h-4 ${subtextClass} shrink-0`} />
+            <input
+              type="range"
+              min="10"
+              max="100"
+              value={brightness}
+              onChange={(e) => onBrightnessChange(Number.parseInt(e.target.value))}
+              className={`flex-1 ${sliderClass} cursor-pointer`}
+            />
+            <Sun className={`w-5 h-5 ${textClass} shrink-0`} />
+          </div>
         </div>
 
-        <div className="bg-gray-700 rounded-xl p-3">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-white text-sm">Volume</span>
-            <span className="text-white text-sm">{volume}%</span>
+        {/* Sound Slider */}
+        <div className={`${moduleClass} p-4`}>
+          <div className={`flex items-center justify-between mb-3 ${textClass}`}>
+            <span className="text-sm font-medium">Sound</span>
           </div>
-          <div className="flex items-center">
-            {volume === 0 ? (
-              <VolumeX className="w-5 h-5 text-white mr-2" />
-            ) : (
-              <Volume2 className="w-5 h-5 text-white mr-2" />
-            )}
+          <div className="flex items-center gap-3">
+            <VolumeX className={`w-4 h-4 ${subtextClass} shrink-0`} />
             <input
               type="range"
               min="0"
               max="100"
               value={volume}
               onChange={(e) => setVolume(Number.parseInt(e.target.value))}
-              className="flex-1 h-1 bg-gray-600 rounded-full appearance-none cursor-pointer"
+              className={`flex-1 ${sliderClass} cursor-pointer`}
             />
+            <Volume2 className={`w-5 h-5 ${textClass} shrink-0`} />
           </div>
         </div>
       </div>

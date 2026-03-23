@@ -152,6 +152,39 @@ export default function Desktop({
           activeWindow={activeWindowId ? openWindows.find((w) => w.id === activeWindowId) || null : null}
         />
 
+        {/* Desktop Shortcuts */}
+        <div className="absolute top-10 right-6 flex flex-col items-center gap-5 z-10">
+          {[
+            { id: "resume", title: "Resume", icon: "/preview.svg", component: "Resume" },
+            { id: "projects", title: "Projects", icon: "/finder.svg", component: "Projects" },
+            { id: "github", title: "GitHub", icon: "/github-icon.svg", component: "GitHub" },
+          ].map((app) => (
+            <div
+              key={app.id}
+              className="flex flex-col items-center gap-1 cursor-pointer group"
+              onDoubleClick={() =>
+                openApp({
+                  id: app.id,
+                  title: app.title,
+                  component: app.component,
+                  position: { x: Math.random() * 200 + 100, y: Math.random() * 100 + 50 },
+                  size: { width: 800, height: 600 },
+                })
+              }
+            >
+              <img
+                src={app.icon}
+                alt={app.title}
+                className="w-16 h-16 rounded-[22%] group-hover:scale-110 transition-transform drop-shadow-lg"
+                draggable="false"
+              />
+              <span className="text-white text-xs font-medium drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                {app.title}
+              </span>
+            </div>
+          ))}
+        </div>
+
         {/* Windows */}
         <div className="absolute inset-0 pt-6 pb-16">
           {openWindows.map((window) => (

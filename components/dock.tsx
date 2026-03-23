@@ -6,7 +6,6 @@ import { useState, useRef, useEffect } from "react"
 import { MoreHorizontal } from "lucide-react"
 import type { AppWindow } from "@/types"
 
-// Updated app list with Snake game
 const dockApps = [
   { id: "launchpad", title: "Launchpad", icon: "/launchpad.png", component: "Launchpad", isSystem: true },
   { id: "safari", title: "Safari", icon: "/safari.png", component: "Safari" },
@@ -15,8 +14,9 @@ const dockApps = [
   { id: "notes", title: "Notes", icon: "/notes.png", component: "Notes" },
   { id: "facetime", title: "FaceTime", icon: "/facetime.png", component: "FaceTime" },
   { id: "terminal", title: "Terminal", icon: "/terminal.png", component: "Terminal" },
-  { id: "github", title: "GitHub", icon: "/github.png", component: "GitHub" },
-  { id: "youtube", title: "YouTube", icon: "/youtube.png", component: "YouTube" },
+  { id: "projects", title: "Projects", icon: "/finder.svg", component: "Projects" },
+  { id: "resume", title: "Resume", icon: "/preview.svg", component: "Resume" },
+  { id: "github", title: "GitHub", icon: "/github-icon.svg", component: "GitHub" },
   { id: "spotify", title: "Spotify", icon: "/spotify.png", component: "Spotify" },
 ]
 
@@ -33,7 +33,6 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
   const [isMobile, setIsMobile] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
 
-  // Check if we're on a mobile device
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
@@ -45,7 +44,6 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
 
-  // Close mobile menu when clicking outside
   useEffect(() => {
     if (!showMobileMenu) return
 
@@ -75,7 +73,6 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
       size: { width: 800, height: 600 },
     })
 
-    // Close mobile menu after clicking an app
     if (showMobileMenu) {
       setShowMobileMenu(false)
     }
@@ -93,43 +90,40 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
     setMouseX(null)
   }
 
-  // Calculate scale for each icon based on distance from mouse
   const getIconScale = (index: number, iconCount: number) => {
     if (mouseX === null || isMobile) return 1
 
-    // Get the dock width and calculate the position of each icon
     const dockWidth = dockRef.current?.offsetWidth || 0
     const iconWidth = dockWidth / iconCount
-    const iconPosition = iconWidth * (index + 0.5) // Center of the icon
+    const iconPosition = iconWidth * (index + 0.5)
 
-    // Distance from mouse to icon center
     const distance = Math.abs(mouseX - iconPosition)
 
-    // Maximum scale and distance influence
     const maxScale = 2
     const maxDistance = iconWidth * 2.5
 
-    // Calculate scale based on distance (closer = larger)
     if (distance > maxDistance) return 1
 
-    // Smooth parabolic scaling function
     const scale = 1 + (maxScale - 1) * Math.pow(1 - distance / maxDistance, 2)
 
     return scale
   }
 
-  // For mobile, we'll show only the first 4 apps plus a "more" button
   const visibleApps = isMobile ? dockApps.slice(0, 4) : dockApps
   const hiddenApps = isMobile ? dockApps.slice(4) : []
+
+  const dockGlass = isDarkMode
+    ? "bg-white/10 border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]"
+    : "bg-white/45 border border-white/50 shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.5)]"
 
   return (
     <div ref={dockRef} className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-50">
       {/* Mobile expanded menu */}
       {isMobile && showMobileMenu && (
         <div
-          className={`absolute bottom-20 left-1/2 transform -translate-x-1/2 w-[280px] 
-          ${isDarkMode ? "bg-gray-800/90" : "bg-white/90"} backdrop-blur-xl 
-          rounded-xl border border-white/20 shadow-lg p-4 mb-2`}
+          className={`absolute bottom-20 left-1/2 transform -translate-x-1/2 w-[280px]
+          ${isDarkMode ? "liquid-glass" : "liquid-glass-light"}
+          rounded-2xl p-4 mb-2`}
         >
           <div className="grid grid-cols-4 gap-4">
             {hiddenApps.map((app) => (
@@ -156,9 +150,9 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
 
       {/* Main dock */}
       <div
-        className={`px-3 py-2 rounded-2xl 
-          ${isDarkMode ? "bg-white/10" : "bg-white/60"} backdrop-blur-xl 
-          flex items-end border border-white/20 shadow-lg
+        className={`px-3 py-2 rounded-2xl backdrop-blur-[40px] saturate-[1.8]
+          ${dockGlass}
+          flex items-end
           ${isMobile ? "h-20" : "h-16"}`}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -188,20 +182,23 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
                 <img
                   src={app.icon || "/placeholder.svg"}
                   alt={app.title}
-                  className={`object-contain ${isMobile ? "w-14 h-14" : "w-12 h-12"}`}
+                  className={`object-contain rounded-[22%] ${isMobile ? "w-14 h-14" : "w-12 h-12"}`}
                   draggable="false"
                 />
 
                 {/* Tooltip - only on desktop */}
                 {!isMobile && scale > 1.5 && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-black/70 text-white text-xs rounded whitespace-nowrap">
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1
+                    bg-black/70 text-white text-[11px] rounded-md whitespace-nowrap pointer-events-none">
                     {app.title}
                   </div>
                 )}
 
                 {/* Indicator dot for active apps */}
                 {activeAppIds.includes(app.id) && (
-                  <div className="absolute bottom-[-5px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
+                  <div className={`absolute bottom-[-5px] left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full ${
+                    isDarkMode ? "bg-white" : "bg-gray-600"
+                  }`}></div>
                 )}
               </div>
             </div>
@@ -216,9 +213,11 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
           >
             <div className="relative cursor-pointer">
               <div
-                className={`w-14 h-14 rounded-full flex items-center justify-center 
-                ${isDarkMode ? "bg-gray-700" : "bg-gray-200"} 
-                ${showMobileMenu ? (isDarkMode ? "bg-blue-700" : "bg-blue-200") : ""}`}
+                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all
+                ${showMobileMenu
+                  ? "bg-blue-500/60"
+                  : isDarkMode ? "bg-white/10" : "bg-black/10"
+                }`}
               >
                 <MoreHorizontal className={`w-8 h-8 ${isDarkMode ? "text-white" : "text-gray-800"}`} />
               </div>

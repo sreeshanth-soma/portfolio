@@ -47,26 +47,21 @@ export default function Menubar({
   })
 
   useEffect(() => {
-    // Try to get battery information if available
     if ("getBattery" in navigator) {
       // @ts-ignore - getBattery is not in the standard navigator type
       navigator
         .getBattery()
         .then((battery: any) => {
           updateBatteryStatus(battery)
-
-          // Listen for battery status changes
           battery.addEventListener("levelchange", () => updateBatteryStatus(battery))
           battery.addEventListener("chargingchange", () => updateBatteryStatus(battery))
         })
         .catch(() => {
-          // If there's an error, default to 100%
           setBatteryLevel(100)
           setIsCharging(false)
         })
     }
 
-    // Load WiFi state from localStorage
     const savedWifi = localStorage.getItem("wifiEnabled")
     if (savedWifi !== null) {
       setWifiEnabled(savedWifi === "true")
@@ -116,42 +111,57 @@ export default function Menubar({
     setShowWifiToggle(!showWifiToggle)
   }
 
-  const menuBgClass = isDarkMode ? "bg-black/40 backdrop-blur-md" : "bg-white/20 backdrop-blur-md"
-  const dropdownBgClass = isDarkMode ? "bg-gray-800/90 backdrop-blur-md" : "bg-gray-200/90 backdrop-blur-md"
   const textClass = isDarkMode ? "text-white" : "text-gray-800"
-  const hoverClass = isDarkMode ? "hover:bg-blue-600" : "hover:bg-blue-400"
+
+  const menuBarStyle = isDarkMode
+    ? "bg-black/30 backdrop-blur-[40px] border-b border-white/5"
+    : "bg-white/25 backdrop-blur-[40px] border-b border-white/30"
+
+  const dropdownClass = isDarkMode
+    ? "liquid-glass rounded-2xl shadow-2xl"
+    : "liquid-glass-light rounded-2xl shadow-2xl"
+
+  const hoverClass = isDarkMode
+    ? "hover:bg-white/10 rounded-lg"
+    : "hover:bg-black/5 rounded-lg"
 
   return (
     <div
       ref={menuRef}
-      className={`fixed top-0 left-0 right-0 h-6 ${menuBgClass} z-50 flex items-center px-4 ${textClass} text-sm`}
+      className={`fixed top-0 left-0 right-0 h-7 ${menuBarStyle} z-50 flex items-center px-4 ${textClass} text-[13px]`}
     >
       <div className="flex-1 flex items-center">
         <button
-          className="flex items-center mr-4 hover:bg-white/10 px-2 py-0.5 rounded"
+          className={`flex items-center mr-4 ${hoverClass} px-2 py-0.5`}
           onClick={() => toggleMenu("apple")}
         >
           <AppleIcon className="w-4 h-4" />
         </button>
 
         {activeMenu === "apple" && (
-          <div className={`absolute top-6 left-2 ${dropdownBgClass} rounded-lg shadow-xl ${textClass} py-1 w-56`}>
-            <button className={`w-full text-left px-4 py-1 ${hoverClass}`}>About This Mac</button>
-            <div className="border-t border-gray-700 my-1"></div>
-            <button className={`w-full text-left px-4 py-1 ${hoverClass}`}>System Settings...</button>
-            <button className={`w-full text-left px-4 py-1 ${hoverClass}`}>App Store...</button>
-            <div className="border-t border-gray-700 my-1"></div>
-            <button className={`w-full text-left px-4 py-1 ${hoverClass}`} onClick={onSleep}>
+          <div className={`absolute top-7 left-2 ${dropdownClass} ${textClass} py-2 w-56`}>
+            <button className={`w-full text-left px-4 py-1.5 ${hoverClass} mx-1`} style={{ width: "calc(100% - 8px)" }}>
+              About This Mac
+            </button>
+            <div className={`border-t ${isDarkMode ? "border-white/10" : "border-black/10"} my-1.5 mx-3`}></div>
+            <button className={`w-full text-left px-4 py-1.5 ${hoverClass} mx-1`} style={{ width: "calc(100% - 8px)" }}>
+              System Settings...
+            </button>
+            <button className={`w-full text-left px-4 py-1.5 ${hoverClass} mx-1`} style={{ width: "calc(100% - 8px)" }}>
+              App Store...
+            </button>
+            <div className={`border-t ${isDarkMode ? "border-white/10" : "border-black/10"} my-1.5 mx-3`}></div>
+            <button className={`w-full text-left px-4 py-1.5 ${hoverClass} mx-1`} style={{ width: "calc(100% - 8px)" }} onClick={onSleep}>
               Sleep
             </button>
-            <button className={`w-full text-left px-4 py-1 ${hoverClass}`} onClick={onRestart}>
+            <button className={`w-full text-left px-4 py-1.5 ${hoverClass} mx-1`} style={{ width: "calc(100% - 8px)" }} onClick={onRestart}>
               Restart...
             </button>
-            <button className={`w-full text-left px-4 py-1 ${hoverClass}`} onClick={onShutdown}>
+            <button className={`w-full text-left px-4 py-1.5 ${hoverClass} mx-1`} style={{ width: "calc(100% - 8px)" }} onClick={onShutdown}>
               Shut Down...
             </button>
-            <div className="border-t border-gray-700 my-1"></div>
-            <button className={`w-full text-left px-4 py-1 ${hoverClass}`} onClick={onLogout}>
+            <div className={`border-t ${isDarkMode ? "border-white/10" : "border-black/10"} my-1.5 mx-3`}></div>
+            <button className={`w-full text-left px-4 py-1.5 ${hoverClass} mx-1`} style={{ width: "calc(100% - 8px)" }} onClick={onLogout}>
               Log Out Sreeshanth...
             </button>
           </div>
@@ -159,7 +169,7 @@ export default function Menubar({
 
         {activeWindow && (
           <button
-            className={`mr-4 font-medium hover:bg-white/10 px-2 py-0.5 rounded ${activeMenu === "app" ? "bg-white/10" : ""}`}
+            className={`mr-4 font-medium ${hoverClass} px-2 py-0.5 ${activeMenu === "app" ? (isDarkMode ? "bg-white/10" : "bg-black/5") : ""}`}
             onClick={() => toggleMenu("app")}
           >
             {activeWindow.title}
@@ -168,10 +178,10 @@ export default function Menubar({
       </div>
 
       <div className="flex items-center space-x-3">
-        <span className="mr-1">{batteryLevel}%</span>
+        <span className="mr-1 text-xs">{batteryLevel}%</span>
         <div className="relative">
           <div className="w-6 h-3 border border-current rounded-sm relative">
-            <div className="absolute top-0 left-0 bottom-0 bg-current" style={{ width: `${batteryLevel}%` }}></div>
+            <div className="absolute top-0 left-0 bottom-0 bg-current rounded-sm" style={{ width: `${batteryLevel}%` }}></div>
             <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1 h-2 bg-current rounded-r-sm"></div>
             {isCharging && <div className="absolute inset-0 flex items-center justify-center text-xs">⚡</div>}
           </div>
@@ -187,7 +197,7 @@ export default function Menubar({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-5 h-5"
+              className="w-4 h-4"
             >
               {wifiEnabled ? (
                 <>
@@ -213,28 +223,28 @@ export default function Menubar({
           {showWifiToggle && (
             <div
               ref={wifiRef}
-              className={`absolute top-6 right-0 ${dropdownBgClass} rounded-lg shadow-xl ${textClass} py-3 px-4 w-64`}
+              className={`absolute top-7 right-0 ${dropdownClass} ${textClass} py-3 px-4 w-64`}
             >
               <div className="flex items-center justify-between">
-                <span className="font-medium">Wi-Fi</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" checked={wifiEnabled} onChange={toggleWifi} className="sr-only peer" />
-                  <div className="w-11 h-6 bg-gray-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-                </label>
+                <span className="font-medium text-sm">Wi-Fi</span>
+                <button
+                  onClick={toggleWifi}
+                  className={`liquid-toggle ${wifiEnabled ? "active" : ""}`}
+                />
               </div>
             </div>
           )}
         </div>
 
-        <button onClick={onSpotlightClick}>
-          <Search className="w-4 h-4" />
+        <button onClick={onSpotlightClick} className={`${hoverClass} p-1`}>
+          <Search className="w-3.5 h-3.5" />
         </button>
 
-        <button onClick={onControlCenterClick} className="flex items-center justify-center">
+        <button onClick={onControlCenterClick} className={`flex items-center justify-center ${hoverClass} p-1`}>
           <img
             src="/control-center-icon.webp"
             alt="Control Center"
-            className="w-4 h-4"
+            className="w-3.5 h-3.5"
             style={{
               filter: isDarkMode ? "invert(1)" : "none",
               opacity: 0.9,
@@ -242,7 +252,7 @@ export default function Menubar({
           />
         </button>
 
-        <span>{formattedTime}</span>
+        <span className="text-xs">{formattedTime}</span>
       </div>
     </div>
   )

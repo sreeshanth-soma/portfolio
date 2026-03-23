@@ -16,6 +16,8 @@ import YouTube from "@/components/apps/youtube"
 import Spotify from "@/components/apps/spotify"
 import Snake from "@/components/apps/snake"
 import Weather from "@/components/apps/weather"
+import Resume from "@/components/apps/resume"
+import Projects from "@/components/apps/projects"
 
 
 const componentMap: Record<string, React.ComponentType<{ isDarkMode?: boolean }>> = {
@@ -30,6 +32,8 @@ const componentMap: Record<string, React.ComponentType<{ isDarkMode?: boolean }>
   Spotify,
   Snake,
   Weather,
+  Resume,
+  Projects,
 }
 
 interface WindowProps {
@@ -40,9 +44,9 @@ interface WindowProps {
   isDarkMode: boolean
 }
 
-export default function Window({ window, isActive, onClose, onFocus, isDarkMode }: WindowProps) {
-  const [position, setPosition] = useState(window.position)
-  const [size, setSize] = useState(window.size)
+export default function Window({ window: appWindow, isActive, onClose, onFocus, isDarkMode }: WindowProps) {
+  const [position, setPosition] = useState(appWindow.position)
+  const [size, setSize] = useState(appWindow.size)
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [isMaximized, setIsMaximized] = useState(false)
@@ -54,7 +58,7 @@ export default function Window({ window, isActive, onClose, onFocus, isDarkMode 
 
   const windowRef = useRef<HTMLDivElement>(null)
 
-  const AppComponent = componentMap[window.component]
+  const AppComponent = componentMap[appWindow.component]
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -187,20 +191,23 @@ export default function Window({ window, isActive, onClose, onFocus, isDarkMode 
 
   const titleBarClass = isDarkMode
     ? isActive
-      ? "bg-gray-800"
-      : "bg-gray-900"
+      ? "bg-gray-800/90 backdrop-blur-xl"
+      : "bg-gray-900/80 backdrop-blur-xl"
     : isActive
-      ? "bg-gray-200"
-      : "bg-gray-100"
+      ? "bg-white/70 backdrop-blur-xl"
+      : "bg-white/50 backdrop-blur-xl"
 
   const contentBgClass = isDarkMode ? "bg-gray-900" : "bg-white"
   const textClass = isDarkMode ? "text-white" : "text-gray-800"
-  const resizeBorderClass = isDarkMode ? "border-gray-700" : "border-gray-300"
 
   return (
     <div
       ref={windowRef}
-      className={`absolute rounded-lg overflow-hidden shadow-2xl transition-shadow ${isActive ? "shadow-2xl z-10" : "shadow-lg z-0"}`}
+      className={`absolute rounded-xl overflow-hidden transition-shadow ${
+        isActive
+          ? "shadow-[0_12px_40px_rgba(0,0,0,0.3)] z-10"
+          : "shadow-[0_6px_20px_rgba(0,0,0,0.15)] z-0"
+      } ${isDarkMode ? "border border-white/10" : "border border-black/10"}`}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -232,7 +239,7 @@ export default function Window({ window, isActive, onClose, onFocus, isDarkMode 
           </button>
         </div>
 
-        <div className={`flex-1 text-center text-sm font-medium truncate ${textClass}`}>{window.title}</div>
+        <div className={`flex-1 text-center text-sm font-medium truncate ${textClass}`}>{appWindow.title}</div>
 
         <div className="w-16">{/* Spacer to balance the title */}</div>
       </div>

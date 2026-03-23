@@ -1,21 +1,25 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { Search } from "lucide-react"
 import type { AppWindow } from "@/types"
 
 const spotlightApps = [
-  { id: "safari", title: "Safari", icon: "/safari.png", component: "Safari" },
-  { id: "mail", title: "Mail", icon: "/mail.png", component: "Mail" },
-  { id: "vscode", title: "VS Code", icon: "/vscode.png", component: "VSCode" },
-  { id: "notes", title: "Notes", icon: "/notes.png", component: "Notes" },
-  { id: "facetime", title: "FaceTime", icon: "/facetime.png", component: "FaceTime" },
-  { id: "terminal", title: "Terminal", icon: "/terminal.png", component: "Terminal" },
-  { id: "github", title: "GitHub", icon: "/github.png", component: "GitHub" },
-  { id: "youtube", title: "YouTube", icon: "/youtube.png", component: "YouTube" },
-  { id: "spotify", title: "Spotify", icon: "/spotify.png", component: "Spotify" },
-  { id: "snake", title: "Snake", icon: "/snake.png", component: "Snake" },
-  { id: "weather", title: "Weather", icon: "/weather.png", component: "Weather" },
+  { id: "safari", title: "Safari", icon: "/safari.png", component: "Safari", category: "Applications" },
+  { id: "mail", title: "Mail", icon: "/mail.png", component: "Mail", category: "Applications" },
+  { id: "vscode", title: "VS Code", icon: "/vscode.png", component: "VSCode", category: "Applications" },
+  { id: "notes", title: "Notes", icon: "/notes.png", component: "Notes", category: "Applications" },
+  { id: "facetime", title: "FaceTime", icon: "/facetime.png", component: "FaceTime", category: "Applications" },
+  { id: "terminal", title: "Terminal", icon: "/terminal.png", component: "Terminal", category: "Applications" },
+  { id: "projects", title: "Projects", icon: "/finder.svg", component: "Projects", category: "Applications" },
+  { id: "resume", title: "Resume", icon: "/preview.svg", component: "Resume", category: "Applications" },
+  { id: "github", title: "GitHub", icon: "/github-icon.svg", component: "GitHub", category: "Applications" },
+  { id: "spotify", title: "Spotify", icon: "/spotify.png", component: "Spotify", category: "Applications" },
+  { id: "snake", title: "Snake", icon: "/snake.png", component: "Snake", category: "Applications" },
+  { id: "weather", title: "Weather", icon: "/weather.png", component: "Weather", category: "Applications" },
 ]
+
+const categories = ["All", "Applications", "Settings", "Help"]
 
 interface SpotlightProps {
   onClose: () => void
@@ -26,13 +30,12 @@ export default function Spotlight({ onClose, onAppClick }: SpotlightProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredApps, setFilteredApps] = useState(spotlightApps)
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [activeCategory, setActiveCategory] = useState("All")
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    // Focus the input when spotlight opens
     inputRef.current?.focus()
 
-    // Handle escape key to close
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose()
@@ -53,14 +56,16 @@ export default function Spotlight({ onClose, onAppClick }: SpotlightProps) {
   }, [filteredApps, selectedIndex])
 
   useEffect(() => {
+    let filtered = spotlightApps
     if (searchTerm) {
-      const filtered = spotlightApps.filter((app) => app.title.toLowerCase().includes(searchTerm.toLowerCase()))
-      setFilteredApps(filtered)
-      setSelectedIndex(0) // Reset selection when search changes
-    } else {
-      setFilteredApps(spotlightApps)
+      filtered = filtered.filter((app) => app.title.toLowerCase().includes(searchTerm.toLowerCase()))
     }
-  }, [searchTerm])
+    if (activeCategory !== "All") {
+      filtered = filtered.filter((app) => app.category === activeCategory)
+    }
+    setFilteredApps(filtered)
+    setSelectedIndex(0)
+  }, [searchTerm, activeCategory])
 
   const handleAppClick = (app: (typeof spotlightApps)[0]) => {
     onAppClick({
@@ -74,53 +79,72 @@ export default function Spotlight({ onClose, onAppClick }: SpotlightProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-transparent z-40 flex items-center justify-center" onClick={onClose}>
+    <div className="fixed inset-0 bg-transparent z-40 flex items-start justify-center pt-[15vh]" onClick={onClose}>
       <div
-        className="w-full max-w-2xl bg-gray-800/80 backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl"
+        className="w-full max-w-2xl liquid-glass-light rounded-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative">
-          <svg
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+        {/* Search Input */}
+        <div className="relative border-b border-white/20">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             ref={inputRef}
             type="text"
             placeholder="Search"
-            className="w-full bg-transparent text-white border-0 py-4 pl-12 pr-4 focus:outline-none text-lg"
+            className="w-full bg-transparent text-gray-800 border-0 py-4 pl-12 pr-4 focus:outline-none text-lg placeholder:text-gray-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
+        {/* Category Tabs */}
+        <div className="flex items-center gap-1 px-3 py-2 border-b border-white/15 overflow-x-auto">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                activeCategory === cat
+                  ? "bg-white/40 text-gray-800 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-white/20"
+              }`}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Results */}
         {filteredApps.length > 0 && (
-          <div className="max-h-80 overflow-y-auto">
+          <div className="max-h-80 overflow-y-auto py-1">
             {filteredApps.map((app, index) => (
               <div
                 key={app.id}
-                className={`flex items-center px-4 py-3 cursor-pointer ${
-                  index === selectedIndex ? "bg-blue-500" : "hover:bg-gray-700"
+                className={`flex items-center px-4 py-2.5 cursor-pointer mx-1 rounded-xl transition-all ${
+                  index === selectedIndex
+                    ? "bg-blue-500/80 text-white"
+                    : "hover:bg-white/30 text-gray-700"
                 }`}
                 onClick={() => handleAppClick(app)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
                 <div className="w-8 h-8 flex items-center justify-center mr-3">
-                  <img src={app.icon || "/placeholder.svg"} alt={app.title} className="w-6 h-6 object-contain" />
+                  <img src={app.icon || "/placeholder.svg"} alt={app.title} className="w-7 h-7 object-contain" />
                 </div>
-                <span className="text-white">{app.title}</span>
+                <div className="flex-1">
+                  <span className="text-sm font-medium">{app.title}</span>
+                </div>
+                <span className={`text-xs ${index === selectedIndex ? "text-white/60" : "text-gray-400"}`}>
+                  {app.category}
+                </span>
               </div>
             ))}
+          </div>
+        )}
+
+        {filteredApps.length === 0 && searchTerm && (
+          <div className="py-8 text-center text-gray-400 text-sm">
+            No results for &ldquo;{searchTerm}&rdquo;
           </div>
         )}
       </div>

@@ -74,11 +74,6 @@ export default function Safari({ isDarkMode = true }: SafariProps) {
       icon: "/linkedin.png",
     },
     {
-      title: "YouTube",
-      url: "https://youtube.com",
-      icon: "/youtube.png",
-    },
-    {
       title: "Reddit",
       url: "https://reddit.com",
       icon: "/reddit.png",

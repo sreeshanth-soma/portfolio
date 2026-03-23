@@ -10,6 +10,7 @@ import Window from "@/components/window"
 import Launchpad from "@/components/launchpad"
 import ControlCenter from "@/components/control-center"
 import Spotlight from "@/components/spotlight"
+import { getDefaultWindowFrame } from "@/lib/window-frame"
 import type { AppWindow } from "@/types"
 
 interface DesktopProps {
@@ -42,6 +43,8 @@ export default function Desktop({
   const [isDarkMode, setIsDarkMode] = useState(initialDarkMode)
   const [screenBrightness, setScreenBrightness] = useState(initialBrightness)
   const desktopRef = useRef<HTMLDivElement>(null)
+  const openWindowsRef = useRef<AppWindow[]>([])
+  const activeWindowIdRef = useRef<string | null>(null)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -62,12 +65,21 @@ export default function Desktop({
     setScreenBrightness(initialBrightness)
   }, [initialBrightness])
 
+  useEffect(() => {
+    openWindowsRef.current = openWindows
+  }, [openWindows])
+
+  useEffect(() => {
+    activeWindowIdRef.current = activeWindowId
+  }, [activeWindowId])
+
   const openApp = (app: AppWindow) => {
     // Check if app is already open
-    const isOpen = openWindows.some((window) => window.id === app.id)
+    const isOpen = openWindowsRef.current.some((window) => window.id === app.id)
 
     if (!isOpen) {
-      setOpenWindows((prev) => [...prev, app])
+      const defaultFrame = getDefaultWindowFrame(openWindowsRef.current.length)
+      setOpenWindows((prev) => [...prev, { ...app, ...defaultFrame }])
     }
 
     // Set as active window
@@ -80,13 +92,13 @@ export default function Desktop({
   }
 
   const closeWindow = (id: string) => {
-    setOpenWindows((prev) => prev.filter((window) => window.id !== id))
+    const remainingWindows = openWindowsRef.current.filter((window) => window.id !== id)
+    setOpenWindows(remainingWindows)
 
     // If we closed the active window, set the last window as active
-    if (activeWindowId === id && openWindows.length > 1) {
-      const remainingWindows = openWindows.filter((window) => window.id !== id)
+    if (activeWindowIdRef.current === id && remainingWindows.length > 0) {
       setActiveWindowId(remainingWindows[remainingWindows.length - 1].id)
-    } else if (openWindows.length <= 1) {
+    } else if (remainingWindows.length === 0) {
       setActiveWindowId(null)
     }
   }

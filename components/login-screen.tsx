@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { User, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
+import Wallpaper from "@/components/wallpaper";
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -54,22 +54,19 @@ export default function LoginScreen({
     day: "numeric",
   });
 
-  // Choose wallpaper based on dark/light mode
-  const wallpaper = isDarkMode ? "/wallpaper-night.jpg" : "/wallpaper-day.jpg";
-
   return (
-    <div
-      className="h-screen w-screen bg-cover bg-center flex flex-col items-center justify-center"
-      style={{ backgroundImage: `url('${wallpaper}')` }}
-    >
-      <div className="flex flex-col items-center mb-8">
+    <div className="relative h-screen w-screen flex flex-col items-center justify-center overflow-hidden">
+      <Wallpaper isDarkMode={isDarkMode} />
+      <div className="absolute inset-0 bg-black/10" />
+
+      <div className="relative z-10 flex flex-col items-center mb-8">
         <div className="text-white text-5xl font-light mb-2">
           {formattedTime}
         </div>
         <div className="text-white text-xl font-light">{formattedDate}</div>
       </div>
 
-      <div className="flex flex-col items-center">
+      <div className="relative z-10 flex flex-col items-center">
         <div className="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center mb-4">
           <span className="text-white text-5xl font-bold">S</span>
         </div>
@@ -111,7 +108,7 @@ export default function LoginScreen({
         </form>
       </div>
 
-      <div className="fixed bottom-8">
+      <div className="fixed bottom-8 z-10">
         <button
           className="text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10"
           onClick={onToggleDarkMode}

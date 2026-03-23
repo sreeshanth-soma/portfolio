@@ -35,10 +35,26 @@ export default function ControlCenter({
       setIsFullscreen(!!document.fullscreenElement)
     }
 
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "wifiEnabled" && event.newValue !== null) {
+        setWifiEnabled(event.newValue === "true")
+      }
+    }
+
+    const handleWifiStateChange = (event: Event) => {
+      if ("detail" in event && typeof event.detail === "boolean") {
+        setWifiEnabled(event.detail)
+      }
+    }
+
     document.addEventListener("fullscreenchange", handleFullscreenChange)
+    window.addEventListener("storage", handleStorage)
+    window.addEventListener("wifi-state-change", handleWifiStateChange)
 
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange)
+      window.removeEventListener("storage", handleStorage)
+      window.removeEventListener("wifi-state-change", handleWifiStateChange)
     }
   }, [])
 
@@ -46,6 +62,7 @@ export default function ControlCenter({
     const newState = !wifiEnabled
     setWifiEnabled(newState)
     localStorage.setItem("wifiEnabled", newState.toString())
+    window.dispatchEvent(new CustomEvent("wifi-state-change", { detail: newState }))
   }
 
   const toggleFullscreen = () => {

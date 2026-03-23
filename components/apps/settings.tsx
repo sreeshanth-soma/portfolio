@@ -1,10 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { User, Shield, Wifi, Bluetooth, Bell, DiscIcon as Display, Clock, Keyboard, Mouse, Globe } from "lucide-react"
+import {
+  DEFAULT_WALLPAPER,
+  isWallpaperPreference,
+  WALLPAPER_CHANGE_EVENT,
+  WALLPAPER_OPTIONS,
+  WALLPAPER_STORAGE_KEY,
+  type WallpaperPreference,
+} from "@/lib/wallpaper"
 
 export default function Settings() {
   const [activeSection, setActiveSection] = useState("general")
+  const [wallpaperPreference, setWallpaperPreference] = useState<WallpaperPreference>(DEFAULT_WALLPAPER)
 
   const sections = [
     { id: "general", name: "General", icon: <Globe className="w-5 h-5" /> },
@@ -18,6 +27,20 @@ export default function Settings() {
     { id: "mouse", name: "Mouse", icon: <Mouse className="w-5 h-5" /> },
     { id: "time", name: "Date & Time", icon: <Clock className="w-5 h-5" /> },
   ]
+
+  useEffect(() => {
+    const storedPreference = localStorage.getItem(WALLPAPER_STORAGE_KEY)
+
+    if (isWallpaperPreference(storedPreference)) {
+      setWallpaperPreference(storedPreference)
+    }
+  }, [])
+
+  const updateWallpaperPreference = (nextPreference: WallpaperPreference) => {
+    setWallpaperPreference(nextPreference)
+    localStorage.setItem(WALLPAPER_STORAGE_KEY, nextPreference)
+    window.dispatchEvent(new Event(WALLPAPER_CHANGE_EVENT))
+  }
 
   return (
     <div className="flex h-full">
@@ -104,6 +127,33 @@ export default function Settings() {
             <h2 className="text-2xl font-semibold mb-6">Appearance</h2>
 
             <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-medium mb-3">Wallpaper</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {WALLPAPER_OPTIONS.map((option) => (
+                    <button
+                      key={option.id}
+                      className={`rounded-xl border p-2 text-left transition-all ${
+                        wallpaperPreference === option.id
+                          ? "border-blue-500 ring-2 ring-blue-200"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      onClick={() => updateWallpaperPreference(option.id)}
+                    >
+                      <div
+                        className="h-28 rounded-lg bg-cover bg-center mb-3"
+                        style={{ backgroundImage: `url('${option.preview}')` }}
+                      />
+                      <p className="font-medium">{option.label}</p>
+                      <p className="text-sm text-gray-500 mt-1">{option.description}</p>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-500 mt-3">
+                  For live wallpaper mode, add a file named <code>wallpaper-live.mp4</code> inside <code>public/</code>.
+                </p>
+              </div>
+
               <div>
                 <h3 className="text-lg font-medium mb-3">Theme</h3>
                 <div className="flex space-x-4">

@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { memo, useState, useRef, useEffect } from "react"
 import { X, Minus, ArrowRightIcon as ArrowsMaximize } from "lucide-react"
 import type { AppWindow } from "@/types"
 import Notes from "@/components/apps/notes"
@@ -42,7 +42,7 @@ interface WindowProps {
   isDarkMode: boolean
 }
 
-export default function Window({ window: appWindow, isActive, onClose, onFocus, isDarkMode }: WindowProps) {
+function WindowComponent({ window: appWindow, isActive, onClose, onFocus, isDarkMode }: WindowProps) {
   const [position, setPosition] = useState(appWindow.position)
   const [size, setSize] = useState(appWindow.size)
   const [isDragging, setIsDragging] = useState(false)
@@ -290,3 +290,19 @@ export default function Window({ window: appWindow, isActive, onClose, onFocus, 
     </div>
   )
 }
+
+function areWindowPropsEqual(previous: WindowProps, next: WindowProps) {
+  return (
+    previous.isActive === next.isActive &&
+    previous.isDarkMode === next.isDarkMode &&
+    previous.window.id === next.window.id &&
+    previous.window.title === next.window.title &&
+    previous.window.component === next.window.component &&
+    previous.window.position.x === next.window.position.x &&
+    previous.window.position.y === next.window.position.y &&
+    previous.window.size.width === next.window.size.width &&
+    previous.window.size.height === next.window.size.height
+  )
+}
+
+export default memo(WindowComponent, areWindowPropsEqual)

@@ -49,7 +49,7 @@ Frontend Developer & Full Stack Engineer
 ## Experience
 
 ## Contact
-Email: mail@sreeshanthsoma
+Email: sreeshanthsoma@gmail.com
 GitHub: github.com/sreeshanth-soma
 Portfolio: sreeshanthsoma.dev`,
       date: "Today, 10:30 AM",

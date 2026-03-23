@@ -67,6 +67,18 @@ export default function Menubar({
       setWifiEnabled(savedWifi === "true")
     }
 
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "wifiEnabled" && event.newValue !== null) {
+        setWifiEnabled(event.newValue === "true")
+      }
+    }
+
+    const handleWifiStateChange = (event: Event) => {
+      if ("detail" in event && typeof event.detail === "boolean") {
+        setWifiEnabled(event.detail)
+      }
+    }
+
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setActiveMenu(null)
@@ -82,8 +94,12 @@ export default function Menubar({
     }
 
     document.addEventListener("mousedown", handleClickOutside)
+    window.addEventListener("storage", handleStorage)
+    window.addEventListener("wifi-state-change", handleWifiStateChange)
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
+      window.removeEventListener("storage", handleStorage)
+      window.removeEventListener("wifi-state-change", handleWifiStateChange)
     }
   }, [])
 
@@ -104,6 +120,7 @@ export default function Menubar({
     const newState = !wifiEnabled
     setWifiEnabled(newState)
     localStorage.setItem("wifiEnabled", newState.toString())
+    window.dispatchEvent(new CustomEvent("wifi-state-change", { detail: newState }))
   }
 
   const toggleWifiPopup = (e: React.MouseEvent) => {

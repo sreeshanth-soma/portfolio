@@ -207,7 +207,7 @@ export default function Terminal({ isDarkMode = true }: TerminalProps) {
           "│ Contact │",
           "└─────────┘",
           "",
-          "Email: mail@sreeshanthsoma",
+          "Email: sreeshanthsoma@gmail.com",
           "GitHub: github.com/sreeshanth-soma",
           "LinkedIn: linkedin.com/in/sreeshanth-soma/",
           "Website: sreeshanthsoma.dev",

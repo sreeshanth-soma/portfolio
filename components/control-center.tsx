@@ -85,7 +85,7 @@ export default function ControlCenter({
 
   return (
     <div
-      className={`fixed top-8 right-4 w-80 ${glassClass} rounded-3xl overflow-hidden z-40`}
+      className={`fixed top-9 right-4 w-80 ${glassClass} rounded-3xl overflow-hidden z-40`}
       onClick={(e) => e.stopPropagation()}
     >
       <div className="p-4 space-y-3">

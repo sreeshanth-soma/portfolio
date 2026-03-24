@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { MoreHorizontal } from "lucide-react"
 import type { AppWindow } from "@/types"
 
@@ -28,8 +28,12 @@ interface DockProps {
 }
 
 export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDarkMode }: DockProps) {
-  const [mouseX, setMouseX] = useState<number | null>(null)
   const dockRef = useRef<HTMLDivElement>(null)
+  const iconRefs = useRef<(HTMLDivElement | null)[]>([])
+  const wrapperRefs = useRef<(HTMLDivElement | null)[]>([])
+  const tooltipRefs = useRef<(HTMLDivElement | null)[]>([])
+  const mouseXRef = useRef<number | null>(null)
+  const rafRef = useRef<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
 
@@ -59,6 +63,99 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
     }
   }, [showMobileMenu])
 
+  // Clean up animation frame on unmount
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
+  const visibleApps = isMobile ? dockApps.slice(0, 4) : dockApps
+  const hiddenApps = isMobile ? dockApps.slice(4) : []
+
+  const updateIcons = useCallback(() => {
+    const dock = dockRef.current
+    if (!dock || isMobile) return
+
+    const mouseX = mouseXRef.current
+    const dockWidth = dock.offsetWidth
+    const iconCount = visibleApps.length
+    const iconWidth = dockWidth / iconCount
+
+    for (let i = 0; i < iconCount; i++) {
+      const iconEl = iconRefs.current[i]
+      const wrapperEl = wrapperRefs.current[i]
+      const tooltipEl = tooltipRefs.current[i]
+
+      if (!iconEl || !wrapperEl) continue
+
+      let scale = 1
+      if (mouseX !== null) {
+        const iconPosition = iconWidth * (i + 0.5)
+        const distance = Math.abs(mouseX - iconPosition)
+        const maxScale = 1.8
+        const maxDistance = iconWidth * 2.5
+
+        if (distance < maxDistance) {
+          scale = 1 + (maxScale - 1) * Math.pow(1 - distance / maxDistance, 2)
+        }
+      }
+
+      const translateY = (scale - 1) * -8
+      wrapperEl.style.transform = `translateY(${translateY}px)`
+      iconEl.style.transform = `scale(${scale})`
+
+      if (tooltipEl) {
+        tooltipEl.style.display = scale > 1.5 ? "block" : "none"
+      }
+    }
+  }, [isMobile, visibleApps.length])
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!dockRef.current || isMobile) return
+
+    const rect = dockRef.current.getBoundingClientRect()
+    mouseXRef.current = e.clientX - rect.left
+
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    rafRef.current = requestAnimationFrame(updateIcons)
+  }, [isMobile, updateIcons])
+
+  const handleMouseLeave = useCallback(() => {
+    mouseXRef.current = null
+
+    // Animate back smoothly
+    const icons = iconRefs.current
+    const wrappers = wrapperRefs.current
+    const tooltips = tooltipRefs.current
+
+    for (let i = 0; i < icons.length; i++) {
+      const iconEl = icons[i]
+      const wrapperEl = wrappers[i]
+      const tooltipEl = tooltips[i]
+
+      if (wrapperEl) {
+        wrapperEl.style.transition = "transform 0.2s ease-out"
+        wrapperEl.style.transform = "translateY(0px)"
+      }
+      if (iconEl) {
+        iconEl.style.transition = "transform 0.2s ease-out"
+        iconEl.style.transform = "scale(1)"
+      }
+      if (tooltipEl) {
+        tooltipEl.style.display = "none"
+      }
+    }
+
+    // Remove transitions after animation completes
+    setTimeout(() => {
+      for (let i = 0; i < icons.length; i++) {
+        if (wrappers[i]) wrappers[i]!.style.transition = "none"
+        if (icons[i]) icons[i]!.style.transition = "none"
+      }
+    }, 200)
+  }, [])
+
   const handleAppClick = (app: (typeof dockApps)[0]) => {
     if (app.id === "launchpad") {
       onLaunchpadClick()
@@ -77,40 +174,6 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
       setShowMobileMenu(false)
     }
   }
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (dockRef.current && !isMobile) {
-      const rect = dockRef.current.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      setMouseX(x)
-    }
-  }
-
-  const handleMouseLeave = () => {
-    setMouseX(null)
-  }
-
-  const getIconScale = (index: number, iconCount: number) => {
-    if (mouseX === null || isMobile) return 1
-
-    const dockWidth = dockRef.current?.offsetWidth || 0
-    const iconWidth = dockWidth / iconCount
-    const iconPosition = iconWidth * (index + 0.5)
-
-    const distance = Math.abs(mouseX - iconPosition)
-
-    const maxScale = 2
-    const maxDistance = iconWidth * 2.5
-
-    if (distance > maxDistance) return 1
-
-    const scale = 1 + (maxScale - 1) * Math.pow(1 - distance / maxDistance, 2)
-
-    return scale
-  }
-
-  const visibleApps = isMobile ? dockApps.slice(0, 4) : dockApps
-  const hiddenApps = isMobile ? dockApps.slice(4) : []
 
   const dockGlass = isDarkMode
     ? "bg-white/10 border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)]"
@@ -150,60 +213,54 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
 
       {/* Main dock */}
       <div
-        className={`px-3 py-2 rounded-2xl backdrop-blur-[40px] saturate-[1.8]
+        className={`px-3 py-2 rounded-2xl backdrop-blur-xl
           ${dockGlass}
           flex items-end
           ${isMobile ? "h-20" : "h-16"}`}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        {visibleApps.map((app, index) => {
-          const scale = getIconScale(index, visibleApps.length)
-
-          return (
+        {visibleApps.map((app, index) => (
+          <div
+            key={app.id}
+            ref={(el) => { wrapperRefs.current[index] = el }}
+            className={`flex flex-col items-center justify-end h-full ${isMobile ? "px-3" : "px-2"} will-change-transform`}
+            style={{ zIndex: 1 }}
+            onClick={() => handleAppClick(app)}
+          >
             <div
-              key={app.id}
-              className={`flex flex-col items-center justify-end h-full ${isMobile ? "px-3" : "px-2"}`}
-              style={{
-                transform: isMobile ? "none" : `translateY(${(scale - 1) * -8}px)`,
-                zIndex: scale > 1 ? 10 : 1,
-                transition: mouseX === null ? "transform 0.2s ease-out" : "none",
-              }}
-              onClick={() => handleAppClick(app)}
+              ref={(el) => { iconRefs.current[index] = el }}
+              className="relative cursor-pointer will-change-transform"
+              style={{ transformOrigin: "bottom center" }}
             >
-              <div
-                className="relative cursor-pointer"
-                style={{
-                  transform: isMobile ? "none" : `scale(${scale})`,
-                  transformOrigin: "bottom center",
-                  transition: mouseX === null ? "transform 0.2s ease-out" : "none",
-                }}
-              >
-                <img
-                  src={app.icon || "/placeholder.svg"}
-                  alt={app.title}
-                  className={`object-contain rounded-[22%] ${isMobile ? "w-14 h-14" : "w-12 h-12"}`}
-                  draggable="false"
-                />
+              <img
+                src={app.icon || "/placeholder.svg"}
+                alt={app.title}
+                className={`object-contain rounded-[22%] ${isMobile ? "w-14 h-14" : "w-12 h-12"}`}
+                draggable="false"
+              />
 
-                {/* Tooltip - only on desktop */}
-                {!isMobile && scale > 1.5 && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1
-                    bg-black/70 text-white text-[11px] rounded-md whitespace-nowrap pointer-events-none">
-                    {app.title}
-                  </div>
-                )}
+              {/* Tooltip - only on desktop */}
+              {!isMobile && (
+                <div
+                  ref={(el) => { tooltipRefs.current[index] = el }}
+                  className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1
+                    bg-black/70 text-white text-[11px] rounded-md whitespace-nowrap pointer-events-none"
+                  style={{ display: "none" }}
+                >
+                  {app.title}
+                </div>
+              )}
 
-                {/* Indicator dot for active apps */}
-                {activeAppIds.includes(app.id) && (
-                  <div className={`absolute bottom-[-5px] left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full ${
-                    isDarkMode ? "bg-white" : "bg-gray-600"
-                  }`}></div>
-                )}
-              </div>
+              {/* Indicator dot for active apps */}
+              {activeAppIds.includes(app.id) && (
+                <div className={`absolute bottom-[-5px] left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full ${
+                  isDarkMode ? "bg-white" : "bg-gray-600"
+                }`}></div>
+              )}
             </div>
-          )
-        })}
+          </div>
+        ))}
 
         {/* More button for mobile */}
         {isMobile && (

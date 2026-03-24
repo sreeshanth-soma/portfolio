@@ -145,18 +145,18 @@ export default function Menubar({
   return (
     <div
       ref={menuRef}
-      className={`fixed top-0 left-0 right-0 h-7 ${menuBarStyle} z-50 flex items-center px-4 ${textClass} text-[13px]`}
+      className={`fixed top-0 left-0 right-0 h-9 ${menuBarStyle} z-50 flex items-center px-4 ${textClass} text-sm`}
     >
       <div className="flex-1 flex items-center">
         <button
           className={`flex items-center mr-4 ${hoverClass} px-2 py-0.5`}
           onClick={() => toggleMenu("apple")}
         >
-          <AppleIcon className="w-4 h-4" />
+          <AppleIcon className="w-5 h-5" />
         </button>
 
         {activeMenu === "apple" && (
-          <div className={`absolute top-7 left-2 ${dropdownClass} ${textClass} py-2 w-56`}>
+          <div className={`absolute top-9 left-2 ${dropdownClass} ${textClass} py-2 w-56`}>
             <button className={`w-full text-left px-4 py-1.5 ${hoverClass} mx-1`} style={{ width: "calc(100% - 8px)" }}>
               About This Mac
             </button>
@@ -195,11 +195,11 @@ export default function Menubar({
       </div>
 
       <div className="flex items-center space-x-3">
-        <span className="mr-1 text-xs">{batteryLevel}%</span>
+        <span className="mr-1 text-sm">{batteryLevel}%</span>
         <div className="relative">
-          <div className="w-6 h-3 border border-current rounded-sm relative">
+          <div className="w-8 h-4 border border-current rounded-sm relative">
             <div className="absolute top-0 left-0 bottom-0 bg-current rounded-sm" style={{ width: `${batteryLevel}%` }}></div>
-            <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1 h-2 bg-current rounded-r-sm"></div>
+            <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1 h-3 bg-current rounded-r-sm"></div>
             {isCharging && <div className="absolute inset-0 flex items-center justify-center text-xs">⚡</div>}
           </div>
         </div>
@@ -214,7 +214,7 @@ export default function Menubar({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-4 h-4"
+              className="w-5 h-5"
             >
               {wifiEnabled ? (
                 <>
@@ -240,7 +240,7 @@ export default function Menubar({
           {showWifiToggle && (
             <div
               ref={wifiRef}
-              className={`absolute top-7 right-0 ${dropdownClass} ${textClass} py-3 px-4 w-64`}
+              className={`absolute top-9 right-0 ${dropdownClass} ${textClass} py-3 px-4 w-64`}
             >
               <div className="flex items-center justify-between">
                 <span className="font-medium text-sm">Wi-Fi</span>
@@ -254,14 +254,14 @@ export default function Menubar({
         </div>
 
         <button onClick={onSpotlightClick} className={`${hoverClass} p-1`}>
-          <Search className="w-3.5 h-3.5" />
+          <Search className="w-5 h-5" />
         </button>
 
         <button onClick={onControlCenterClick} className={`flex items-center justify-center ${hoverClass} p-1`}>
           <img
             src="/control-center-icon.webp"
             alt="Control Center"
-            className="w-3.5 h-3.5"
+            className="w-5 h-5"
             style={{
               filter: isDarkMode ? "invert(1)" : "none",
               opacity: 0.9,
@@ -269,7 +269,7 @@ export default function Menubar({
           />
         </button>
 
-        <span className="text-xs">{formattedTime}</span>
+        <span className="text-sm">{formattedTime}</span>
       </div>
     </div>
   )

@@ -216,13 +216,15 @@ export default function Desktop({
 
         {/* Control Center */}
         {showControlCenter && (
-          <ControlCenter
-            onClose={() => setShowControlCenter(false)}
-            isDarkMode={isDarkMode}
-            onToggleDarkMode={toggleDarkMode}
-            brightness={screenBrightness}
-            onBrightnessChange={updateBrightness}
-          />
+          <div className="fixed inset-0 z-40" onClick={() => setShowControlCenter(false)}>
+            <ControlCenter
+              onClose={() => setShowControlCenter(false)}
+              isDarkMode={isDarkMode}
+              onToggleDarkMode={toggleDarkMode}
+              brightness={screenBrightness}
+              onBrightnessChange={updateBrightness}
+            />
+          </div>
         )}
 
         {/* Spotlight */}

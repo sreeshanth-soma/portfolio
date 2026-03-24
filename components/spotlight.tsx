@@ -79,33 +79,33 @@ export default function Spotlight({ onClose, onAppClick }: SpotlightProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-transparent z-40 flex items-start justify-center pt-[15vh]" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 flex items-start justify-center pt-[12vh]" onClick={onClose}>
       <div
-        className="w-full max-w-2xl liquid-glass-light rounded-2xl overflow-hidden"
+        className="w-full max-w-[680px] bg-gray-800/40 backdrop-blur-[80px] backdrop-saturate-[180%] rounded-2xl overflow-hidden border border-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input */}
-        <div className="relative border-b border-white/20">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <div className="relative border-b border-white/10">
+          <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search"
-            className="w-full bg-transparent text-gray-800 border-0 py-4 pl-12 pr-4 focus:outline-none text-lg placeholder:text-gray-400"
+            placeholder="Spotlight Search"
+            className="w-full bg-transparent text-white border-0 py-5 pl-14 pr-5 focus:outline-none text-xl placeholder:text-gray-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
         {/* Category Tabs */}
-        <div className="flex items-center gap-1 px-3 py-2 border-b border-white/15 overflow-x-auto">
+        <div className="flex items-center gap-1 px-4 py-2.5 border-b border-white/10 overflow-x-auto">
           {categories.map((cat) => (
             <button
               key={cat}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                 activeCategory === cat
-                  ? "bg-white/40 text-gray-800 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-white/20"
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "text-gray-400 hover:text-gray-200 hover:bg-white/10"
               }`}
               onClick={() => setActiveCategory(cat)}
             >
@@ -116,25 +116,25 @@ export default function Spotlight({ onClose, onAppClick }: SpotlightProps) {
 
         {/* Results */}
         {filteredApps.length > 0 && (
-          <div className="max-h-80 overflow-y-auto py-1">
+          <div className="max-h-[400px] overflow-y-auto py-1.5">
             {filteredApps.map((app, index) => (
               <div
                 key={app.id}
-                className={`flex items-center px-4 py-2.5 cursor-pointer mx-1 rounded-xl transition-all ${
+                className={`flex items-center px-5 py-3 cursor-pointer mx-1.5 rounded-xl transition-all ${
                   index === selectedIndex
                     ? "bg-blue-500/80 text-white"
-                    : "hover:bg-white/30 text-gray-700"
+                    : "hover:bg-white/10 text-gray-300"
                 }`}
                 onClick={() => handleAppClick(app)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <div className="w-8 h-8 flex items-center justify-center mr-3">
-                  <img src={app.icon || "/placeholder.svg"} alt={app.title} className="w-7 h-7 object-contain" />
+                <div className="w-9 h-9 flex items-center justify-center mr-4">
+                  <img src={app.icon || "/placeholder.svg"} alt={app.title} className="w-8 h-8 object-contain" />
                 </div>
                 <div className="flex-1">
                   <span className="text-sm font-medium">{app.title}</span>
                 </div>
-                <span className={`text-xs ${index === selectedIndex ? "text-white/60" : "text-gray-400"}`}>
+                <span className={`text-xs ${index === selectedIndex ? "text-white/60" : "text-gray-500"}`}>
                   {app.category}
                 </span>
               </div>
@@ -143,7 +143,7 @@ export default function Spotlight({ onClose, onAppClick }: SpotlightProps) {
         )}
 
         {filteredApps.length === 0 && searchTerm && (
-          <div className="py-8 text-center text-gray-400 text-sm">
+          <div className="py-10 text-center text-gray-500 text-sm">
             No results for &ldquo;{searchTerm}&rdquo;
           </div>
         )}

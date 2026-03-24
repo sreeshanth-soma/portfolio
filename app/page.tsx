@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useIsMobile } from "@/hooks/use-mobile"
 import BootScreen from "@/components/boot-screen"
 import LoginScreen from "@/components/login-screen"
 import Desktop from "@/components/desktop"
@@ -14,8 +13,6 @@ export default function Home() {
   const [systemState, setSystemState] = useState<SystemState>("booting")
   const [isDarkMode, setIsDarkMode] = useState(false) // Default to light mode
   const [screenBrightness, setScreenBrightness] = useState(90)
-  const isMobile = useIsMobile()
-  const [dismissedMobileBanner, setDismissedMobileBanner] = useState(false)
 
   // Simulate boot sequence
   useEffect(() => {
@@ -134,34 +131,6 @@ export default function Home() {
         style={{ opacity: Math.max(0.1, 0.9 - screenBrightness / 100) }}
       />
 
-      {/* Mobile banner */}
-      {isMobile && !dismissedMobileBanner && (
-        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6">
-          <div className="bg-[#1c1c1e] rounded-2xl p-6 max-w-sm w-full text-center border border-white/10">
-            <div className="text-4xl mb-3">💻</div>
-            <h2 className="text-white text-lg font-semibold mb-2">Best on Desktop</h2>
-            <p className="text-white/60 text-sm mb-5">
-              This macOS experience is designed for larger screens. Visit on a desktop for the full experience.
-            </p>
-            <div className="flex flex-col gap-3">
-              <a
-                href="/resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-blue-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl hover:bg-blue-600 transition-colors"
-              >
-                View Resume (PDF)
-              </a>
-              <button
-                onClick={() => setDismissedMobileBanner(true)}
-                className="text-white/50 text-sm hover:text-white/80 transition-colors"
-              >
-                Continue anyway
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

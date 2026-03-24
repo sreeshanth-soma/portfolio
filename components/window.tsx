@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { memo, useState, useRef, useEffect } from "react"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { X, Minus, ArrowRightIcon as ArrowsMaximize } from "lucide-react"
 import type { AppWindow } from "@/types"
 import Notes from "@/components/apps/notes"
@@ -45,6 +46,7 @@ interface WindowProps {
 }
 
 function WindowComponent({ window: appWindow, isActive, onClose, onFocus, isDarkMode }: WindowProps) {
+  const isMobile = useIsMobile()
   const [position, setPosition] = useState(appWindow.position)
   const [size, setSize] = useState(appWindow.size)
   const [isDragging, setIsDragging] = useState(false)
@@ -127,7 +129,7 @@ function WindowComponent({ window: appWindow, isActive, onClose, onFocus, isDark
   }, [isDragging, dragOffset, isResizing, resizeDirection, resizeStartPos, resizeStartSize, position])
 
   const handleTitleBarMouseDown = (e: React.MouseEvent) => {
-    if (isMaximized) return
+    if (isMaximized || isMobile) return
 
     // Prevent dragging when clicking on buttons
     if ((e.target as HTMLElement).closest(".window-controls")) {
@@ -203,7 +205,9 @@ function WindowComponent({ window: appWindow, isActive, onClose, onFocus, isDark
   return (
     <div
       ref={windowRef}
-      className={`absolute rounded-xl overflow-hidden transition-shadow ${
+      className={`absolute overflow-hidden transition-shadow ${
+        isMobile ? "rounded-none" : "rounded-xl"
+      } ${
         isActive
           ? "shadow-[0_12px_40px_rgba(0,0,0,0.3)] z-10"
           : "shadow-[0_6px_20px_rgba(0,0,0,0.15)] z-0"
@@ -225,18 +229,22 @@ function WindowComponent({ window: appWindow, isActive, onClose, onFocus, isDark
           >
             <X className="w-2 h-2 text-red-800 opacity-0 hover:opacity-100" />
           </button>
-          <button
-            className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 flex items-center justify-center"
-            onClick={handleMinimize}
-          >
-            <Minus className="w-2 h-2 text-yellow-800 opacity-0 hover:opacity-100" />
-          </button>
-          <button
-            className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center"
-            onClick={toggleMaximize}
-          >
-            <ArrowsMaximize className="w-2 h-2 text-green-800 opacity-0 hover:opacity-100" />
-          </button>
+          {!isMobile && (
+            <>
+              <button
+                className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 flex items-center justify-center"
+                onClick={handleMinimize}
+              >
+                <Minus className="w-2 h-2 text-yellow-800 opacity-0 hover:opacity-100" />
+              </button>
+              <button
+                className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center"
+                onClick={toggleMaximize}
+              >
+                <ArrowsMaximize className="w-2 h-2 text-green-800 opacity-0 hover:opacity-100" />
+              </button>
+            </>
+          )}
         </div>
 
         <div className={`flex-1 text-center text-sm font-medium truncate ${textClass}`}>{appWindow.title}</div>
@@ -249,8 +257,8 @@ function WindowComponent({ window: appWindow, isActive, onClose, onFocus, isDark
         {AppComponent ? <AppComponent isDarkMode={isDarkMode} /> : <div className="p-4">Content not available</div>}
       </div>
 
-      {/* Resize handles */}
-      {!isMaximized && (
+      {/* Resize handles — hidden on mobile */}
+      {!isMaximized && !isMobile && (
         <>
           {/* Corner resize handles */}
           <div

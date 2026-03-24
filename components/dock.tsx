@@ -98,8 +98,8 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
     }
   }, [])
 
-  const visibleApps = isMobile ? dockApps.slice(0, 4) : dockApps
-  const hiddenApps = isMobile ? dockApps.slice(4) : []
+  const visibleApps = isMobile ? dockApps.slice(0, 6) : dockApps
+  const hiddenApps = isMobile ? dockApps.slice(6) : []
 
   const updateIcons = useCallback(() => {
     const dock = dockRef.current
@@ -249,7 +249,7 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
         className={`px-3 py-2 rounded-2xl backdrop-blur-xl
           ${dockGlass}
           flex items-end
-          ${isMobile ? "h-20" : "h-16"}`}
+          ${isMobile ? "h-[72px]" : "h-16"}`}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -257,7 +257,7 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
           <div
             key={app.id}
             ref={(el) => { wrapperRefs.current[index] = el }}
-            className={`flex flex-col items-center justify-end h-full ${isMobile ? "px-3" : "px-2"} will-change-transform`}
+            className={`flex flex-col items-center justify-end h-full ${isMobile ? "px-2" : "px-2"} will-change-transform`}
             style={{ zIndex: 1 }}
             onClick={() => handleAppClick(app)}
           >
@@ -269,7 +269,7 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
               <img
                 src={app.icon || "/placeholder.svg"}
                 alt={app.title}
-                className={`object-contain rounded-[22%] ${isMobile ? "w-14 h-14" : "w-12 h-12"}`}
+                className={`object-contain rounded-[22%] ${isMobile ? "w-12 h-12" : "w-12 h-12"}`}
                 draggable="false"
               />
 
@@ -298,18 +298,18 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
         {/* More button for mobile */}
         {isMobile && (
           <div
-            className="flex flex-col items-center justify-end h-full px-3"
+            className="flex flex-col items-center justify-end h-full px-2"
             onClick={() => setShowMobileMenu(!showMobileMenu)}
           >
             <div className="relative cursor-pointer">
               <div
-                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all
+                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all
                 ${showMobileMenu
                   ? "bg-blue-500/60"
                   : isDarkMode ? "bg-white/10" : "bg-black/10"
                 }`}
               >
-                <MoreHorizontal className={`w-8 h-8 ${isDarkMode ? "text-white" : "text-gray-800"}`} />
+                <MoreHorizontal className={`w-7 h-7 ${isDarkMode ? "text-white" : "text-gray-800"}`} />
               </div>
             </div>
           </div>

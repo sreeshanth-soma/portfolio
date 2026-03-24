@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
+import { useIsMobile } from "@/hooks/use-mobile"
 import Dock from "@/components/dock"
 import Menubar from "@/components/menubar"
 import Wallpaper from "@/components/wallpaper"
@@ -43,6 +44,7 @@ export default function Desktop({
   const [showSpotlight, setShowSpotlight] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(initialDarkMode)
   const [screenBrightness, setScreenBrightness] = useState(initialBrightness)
+  const isMobile = useIsMobile()
   const desktopRef = useRef<HTMLDivElement>(null)
   const openWindowsRef = useRef<AppWindow[]>([])
   const activeWindowIdRef = useRef<string | null>(null)
@@ -79,16 +81,28 @@ export default function Desktop({
     const isOpen = openWindowsRef.current.some((window) => window.id === app.id)
 
     if (!isOpen) {
-      const defaultFrame = getDefaultWindowFrame(openWindowsRef.current.length)
-      const merged = { ...defaultFrame, ...app }
-      // Center apps that have a custom (smaller) size, accounting for menubar + dock
-      if (app.size && (app.size.width < 600 || app.size.height < 400)) {
-        const menubar = 26
-        const dock = 84
-        const availableH = window.innerHeight - menubar - dock
-        merged.position = {
-          x: Math.round((window.innerWidth - app.size.width) / 2),
-          y: Math.round(menubar + (availableH - app.size.height) / 2),
+      let merged: AppWindow
+      if (isMobile) {
+        // On mobile, all windows open fullscreen
+        const menubar = 36
+        const dock = 72
+        merged = {
+          ...app,
+          position: { x: 0, y: menubar },
+          size: { width: window.innerWidth, height: window.innerHeight - menubar - dock },
+        }
+      } else {
+        const defaultFrame = getDefaultWindowFrame(openWindowsRef.current.length)
+        merged = { ...defaultFrame, ...app }
+        // Center apps that have a custom (smaller) size, accounting for menubar + dock
+        if (app.size && (app.size.width < 600 || app.size.height < 400)) {
+          const menubar = 26
+          const dock = 84
+          const availableH = window.innerHeight - menubar - dock
+          merged.position = {
+            x: Math.round((window.innerWidth - app.size.width) / 2),
+            y: Math.round(menubar + (availableH - app.size.height) / 2),
+          }
         }
       }
       setOpenWindows((prev) => [...prev, merged])
@@ -176,11 +190,11 @@ export default function Desktop({
           activeWindow={activeWindowId ? openWindows.find((w) => w.id === activeWindowId) || null : null}
         />
 
-        {/* Desktop Widgets */}
-        <DesktopWidgets isDarkMode={isDarkMode} time={time} />
+        {/* Desktop Widgets — hidden on mobile */}
+        {!isMobile && <DesktopWidgets isDarkMode={isDarkMode} time={time} />}
 
-        {/* Desktop Shortcuts */}
-        <div className="absolute top-10 right-6 flex flex-col items-center gap-5 z-10">
+        {/* Desktop Shortcuts — hidden on mobile */}
+        <div className="absolute top-10 right-6 flex-col items-center gap-5 z-10 hidden md:flex">
           {[
             { id: "resume", title: "Resume", icon: "/preview.svg", component: "Resume" },
             { id: "projects", title: "Projects", icon: "/finder.svg", component: "Projects" },

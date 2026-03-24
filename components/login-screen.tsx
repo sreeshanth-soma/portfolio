@@ -3,6 +3,7 @@
 import type React from "react";
 
 import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Wallpaper from "@/components/wallpaper";
@@ -18,6 +19,7 @@ export default function LoginScreen({
   isDarkMode,
   onToggleDarkMode,
 }: LoginScreenProps) {
+  const isMobile = useIsMobile();
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [hint, setHint] = useState(false);
@@ -60,26 +62,26 @@ export default function LoginScreen({
       <div className="absolute inset-0 bg-black/10" />
 
       {/* Date & Time — large, top-center like real macOS */}
-      <div className="relative z-10 flex flex-col items-center mt-[8vh]">
+      <div className={`relative z-10 flex flex-col items-center ${isMobile ? "mt-[6vh]" : "mt-[8vh]"}`}>
         <div className="text-white/90 text-lg font-medium tracking-wide">
           {formattedDate}
         </div>
         <div
           className="text-white font-semibold leading-none"
-          style={{ fontSize: "clamp(80px, 12vw, 150px)", letterSpacing: "-2px" }}
+          style={{ fontSize: isMobile ? "clamp(56px, 16vw, 80px)" : "clamp(80px, 12vw, 150px)", letterSpacing: "-2px" }}
         >
           {formattedTime}
         </div>
       </div>
 
       {/* User avatar, name & password — bottom area */}
-      <div className="relative z-10 flex flex-col items-center mt-auto mb-[12vh]">
-        <div className="w-16 h-16 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center mb-3">
-          <User className="w-8 h-8 text-white/70" />
+      <div className={`relative z-10 flex flex-col items-center mt-auto ${isMobile ? "mb-[8vh]" : "mb-[12vh]"}`}>
+        <div className={`${isMobile ? "w-14 h-14" : "w-16 h-16"} rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center mb-3`}>
+          <User className={`${isMobile ? "w-7 h-7" : "w-8 h-8"} text-white/70`} />
         </div>
         <h2 className="text-white text-[17px] font-medium mb-1">Soma sreeshanth</h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col items-center">
+        <form onSubmit={handleSubmit} className="flex flex-col items-center px-4">
           <p className="text-white/50 text-[13px] mb-1">Touch ID or Enter Password</p>
           <p className="text-white/60 text-[12px] mb-3">Hint: Who built this? (first name works)</p>
           <Input

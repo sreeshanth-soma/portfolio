@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { Search } from "lucide-react"
 import { AppleIcon } from "@/components/icons"
 
@@ -29,6 +30,7 @@ export default function Menubar({
   isDarkMode,
   activeWindow,
 }: MenubarProps) {
+  const isMobile = useIsMobile()
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [batteryLevel, setBatteryLevel] = useState(100)
   const [isCharging, setIsCharging] = useState(false)
@@ -184,7 +186,7 @@ export default function Menubar({
           </div>
         )}
 
-        {activeWindow && (
+        {activeWindow && !isMobile && (
           <button
             className={`mr-4 font-medium ${hoverClass} px-2 py-0.5 ${activeMenu === "app" ? (isDarkMode ? "bg-white/10" : "bg-black/5") : ""}`}
             onClick={() => toggleMenu("app")}
@@ -195,81 +197,87 @@ export default function Menubar({
       </div>
 
       <div className="flex items-center space-x-3">
-        <span className="mr-1 text-sm">{batteryLevel}%</span>
-        <div className="relative">
-          <div className="w-8 h-4 border border-current rounded-sm relative">
-            <div className="absolute top-0 left-0 bottom-0 bg-current rounded-sm" style={{ width: `${batteryLevel}%` }}></div>
-            <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1 h-3 bg-current rounded-r-sm"></div>
-            {isCharging && <div className="absolute inset-0 flex items-center justify-center text-xs">⚡</div>}
-          </div>
-        </div>
-
-        <div className="relative">
-          <button className="wifi-icon" onClick={toggleWifiPopup}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-5 h-5"
-            >
-              {wifiEnabled ? (
-                <>
-                  <path d="M5 12.55a11 11 0 0 1 14.08 0" />
-                  <path d="M1.42 9a16 16 0 0 1 21.16 0" />
-                  <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
-                  <circle cx="12" cy="20" r="1" />
-                </>
-              ) : (
-                <>
-                  <line x1="1" y1="1" x2="23" y2="23" />
-                  <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
-                  <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
-                  <path d="M10.71 5.05A16 16 0 0 1 22.58 9" />
-                  <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
-                  <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
-                  <circle cx="12" cy="20" r="1" />
-                </>
-              )}
-            </svg>
-          </button>
-
-          {showWifiToggle && (
-            <div
-              ref={wifiRef}
-              className={`absolute top-9 right-0 ${dropdownClass} ${textClass} py-3 px-4 w-64`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-sm">Wi-Fi</span>
-                <button
-                  onClick={toggleWifi}
-                  className={`liquid-toggle ${wifiEnabled ? "active" : ""}`}
-                />
+        {!isMobile && (
+          <>
+            <span className="mr-1 text-sm">{batteryLevel}%</span>
+            <div className="relative">
+              <div className="w-8 h-4 border border-current rounded-sm relative">
+                <div className="absolute top-0 left-0 bottom-0 bg-current rounded-sm" style={{ width: `${batteryLevel}%` }}></div>
+                <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1 h-3 bg-current rounded-r-sm"></div>
+                {isCharging && <div className="absolute inset-0 flex items-center justify-center text-xs">⚡</div>}
               </div>
             </div>
-          )}
-        </div>
+
+            <div className="relative">
+              <button className="wifi-icon" onClick={toggleWifiPopup}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-5 h-5"
+                >
+                  {wifiEnabled ? (
+                    <>
+                      <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+                      <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+                      <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+                      <circle cx="12" cy="20" r="1" />
+                    </>
+                  ) : (
+                    <>
+                      <line x1="1" y1="1" x2="23" y2="23" />
+                      <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
+                      <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
+                      <path d="M10.71 5.05A16 16 0 0 1 22.58 9" />
+                      <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88" />
+                      <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+                      <circle cx="12" cy="20" r="1" />
+                    </>
+                  )}
+                </svg>
+              </button>
+
+              {showWifiToggle && (
+                <div
+                  ref={wifiRef}
+                  className={`absolute top-9 right-0 ${dropdownClass} ${textClass} py-3 px-4 w-64`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">Wi-Fi</span>
+                    <button
+                      onClick={toggleWifi}
+                      className={`liquid-toggle ${wifiEnabled ? "active" : ""}`}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
 
         <button onClick={onSpotlightClick} className={`${hoverClass} p-1`}>
           <Search className="w-5 h-5" />
         </button>
 
-        <button onClick={onControlCenterClick} className={`flex items-center justify-center ${hoverClass} p-1`}>
-          <img
-            src="/control-center-icon.webp"
-            alt="Control Center"
-            className="w-5 h-5"
-            style={{
-              filter: isDarkMode ? "invert(1)" : "none",
-              opacity: 0.9,
-            }}
-          />
-        </button>
+        {!isMobile && (
+          <button onClick={onControlCenterClick} className={`flex items-center justify-center ${hoverClass} p-1`}>
+            <img
+              src="/control-center-icon.webp"
+              alt="Control Center"
+              className="w-5 h-5"
+              style={{
+                filter: isDarkMode ? "invert(1)" : "none",
+                opacity: 0.9,
+              }}
+            />
+          </button>
+        )}
 
-        <span className="text-sm">{formattedTime}</span>
+        <span className="text-sm">{isMobile ? time.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) : formattedTime}</span>
       </div>
     </div>
   )

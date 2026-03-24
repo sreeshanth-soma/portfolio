@@ -452,7 +452,7 @@ export default function Safari({ isDarkMode = true }: SafariProps) {
   const HomeView = () => (
     <div className="relative h-full overflow-auto">
       <div className="absolute inset-0">
-        <img src="/image.png" alt="Safari start page background" className="h-full w-full object-cover" />
+        <img src="/image.jpg" alt="Safari start page background" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_32%),linear-gradient(180deg,rgba(4,10,24,0.18),rgba(4,10,24,0.58))]" />
       </div>
 

@@ -26,14 +26,14 @@ export default function Spotify({ isDarkMode = true }: SpotifyProps) {
     {
       title: "Lofi Study Beat",
       artist: "Chill Artist",
-      cover: "/cozy-corner-beats.png",
+      cover: "/cozy-corner-beats.jpg",
       file: "/lofi-study-112191.mp3",
       duration: "3:42",
     },
     {
       title: "Acoustic Breeze",
       artist: "Benjamin Tissot",
-      cover: "/cool-blue-jazz.png",
+      cover: "/cool-blue-jazz.jpg",
       // Fallback to the first track if the second one isn't available
       file: "/lofi-study-112191.mp3",
       duration: "2:56",
@@ -41,7 +41,7 @@ export default function Spotify({ isDarkMode = true }: SpotifyProps) {
     {
       title: "Sunny Morning",
       artist: "Alex Productions",
-      cover: "/grand-piano-keys.png",
+      cover: "/grand-piano-keys.jpg",
       // Fallback to the first track if the third one isn't available
       file: "/lofi-study-112191.mp3",
       duration: "4:10",

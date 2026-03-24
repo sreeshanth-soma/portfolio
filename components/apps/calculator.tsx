@@ -98,30 +98,31 @@ export default function Calculator({ isDarkMode }: CalculatorProps) {
 
   const getDisplayFontSize = () => {
     const len = display.replace("-", "").replace(".", "").length
-    if (len <= 6) return "text-[36px]"
-    if (len <= 8) return "text-[28px]"
-    if (len <= 10) return "text-[22px]"
-    return "text-[18px]"
+    if (len <= 6) return "text-[32px]"
+    if (len <= 8) return "text-[24px]"
+    if (len <= 10) return "text-[18px]"
+    return "text-[14px]"
   }
 
-  const btnBase = "flex items-center justify-center select-none transition-colors duration-75 cursor-pointer"
-  const numBtn = `${btnBase} bg-[#333333] hover:bg-[#737373] active:bg-[#737373] text-white text-[18px] font-light rounded-full`
-  const funcBtn = `${btnBase} bg-[#a5a5a5] hover:bg-[#d9d9d9] active:bg-[#d9d9d9] text-black text-[16px] font-medium rounded-full`
-  const opBtn = `${btnBase} text-white text-[20px] font-light rounded-full`
+  const btnSize = "w-[46px] h-[46px]"
+  const btnBase = `${btnSize} flex items-center justify-center select-none transition-colors duration-75 cursor-pointer rounded-full`
+  const numBtn = `${btnBase} bg-[#333333] hover:bg-[#737373] active:bg-[#737373] text-white text-[15px] font-light`
+  const funcBtn = `${btnBase} bg-[#a5a5a5] hover:bg-[#d9d9d9] active:bg-[#d9d9d9] text-black text-[14px] font-medium`
+  const opBtn = `${btnBase} text-white text-[18px] font-light`
 
   const isActive = (op: string) => activeOp === op && resetNext
 
   return (
-    <div className="w-full h-full bg-[#1c1c1e] flex flex-col select-none" style={{ minWidth: 0, minHeight: 0 }}>
+    <div className="w-full h-full bg-[#1c1c1e] flex flex-col select-none overflow-hidden" style={{ minWidth: 0, minHeight: 0 }}>
       {/* Display */}
-      <div className="flex items-end justify-end px-4 pb-1 pt-2" style={{ minHeight: 52 }}>
+      <div className="flex items-end justify-end px-4 pb-1 pt-1" style={{ minHeight: 44 }}>
         <span className={`${getDisplayFontSize()} text-white font-light tracking-tight leading-none`}>
           {display}
         </span>
       </div>
 
       {/* Button grid */}
-      <div className="grid grid-cols-4 gap-[8px] px-3 pb-3 flex-1" style={{ gridTemplateRows: "repeat(5, 1fr)" }}>
+      <div className="grid grid-cols-4 gap-[10px] px-3 pb-3" style={{ gridTemplateRows: "repeat(5, 46px)" }}>
         {/* Row 1: AC +/- % ÷ */}
         <button className={funcBtn} onClick={handleClear}>
           {display !== "0" || previousValue !== null ? "C" : "AC"}
@@ -162,7 +163,7 @@ export default function Calculator({ isDarkMode }: CalculatorProps) {
 
         {/* Row 5: 0 (wide) . = */}
         <button
-          className={`${btnBase} bg-[#333333] hover:bg-[#737373] active:bg-[#737373] text-white text-[18px] font-light rounded-full col-span-2 pl-5 text-left justify-start`}
+          className={`${btnBase} w-auto bg-[#333333] hover:bg-[#737373] active:bg-[#737373] text-white text-[15px] font-light col-span-2 rounded-full pl-[18px] justify-start`}
           onClick={() => handleNumber("0")}
         >0</button>
         <button className={numBtn} onClick={handleDecimal}>.</button>

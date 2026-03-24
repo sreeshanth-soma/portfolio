@@ -81,11 +81,14 @@ export default function Desktop({
     if (!isOpen) {
       const defaultFrame = getDefaultWindowFrame(openWindowsRef.current.length)
       const merged = { ...defaultFrame, ...app }
-      // Center apps that have a custom (smaller) size
+      // Center apps that have a custom (smaller) size, accounting for menubar + dock
       if (app.size && (app.size.width < 600 || app.size.height < 400)) {
+        const menubar = 26
+        const dock = 84
+        const availableH = window.innerHeight - menubar - dock
         merged.position = {
           x: Math.round((window.innerWidth - app.size.width) / 2),
-          y: Math.round((window.innerHeight - app.size.height) / 2) - 30,
+          y: Math.round(menubar + (availableH - app.size.height) / 2),
         }
       }
       setOpenWindows((prev) => [...prev, merged])
@@ -191,9 +194,7 @@ export default function Desktop({
                   id: app.id,
                   title: app.title,
                   component: app.component,
-                  position: { x: Math.random() * 200 + 100, y: Math.random() * 100 + 50 },
-                  size: { width: 800, height: 600 },
-                })
+                } as AppWindow)
               }
             >
               <img

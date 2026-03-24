@@ -6,6 +6,33 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { MoreHorizontal } from "lucide-react"
 import type { AppWindow } from "@/types"
 
+const playDockSound = () => {
+  try {
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+    // Short noise burst — mimics the real macOS soft "tick"
+    const bufferSize = ctx.sampleRate * 0.03 // 30ms
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
+    const data = buffer.getChannelData(0)
+    for (let i = 0; i < bufferSize; i++) {
+      // White noise with fast exponential decay
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.15))
+    }
+    const source = ctx.createBufferSource()
+    source.buffer = buffer
+    // Band-pass filter to keep only the "click" frequencies
+    const filter = ctx.createBiquadFilter()
+    filter.type = "bandpass"
+    filter.frequency.value = 2000
+    filter.Q.value = 0.7
+    const gain = ctx.createGain()
+    gain.gain.value = 0.08
+    source.connect(filter)
+    filter.connect(gain)
+    gain.connect(ctx.destination)
+    source.start()
+  } catch {}
+}
+
 const dockApps = [
   { id: "launchpad", title: "Launchpad", icon: "/launchpad.png", component: "Launchpad", isSystem: true },
   { id: "safari", title: "Safari", icon: "/safari.png", component: "Safari" },
@@ -18,7 +45,7 @@ const dockApps = [
   { id: "resume", title: "Resume", icon: "/preview.svg", component: "Resume" },
   { id: "github", title: "GitHub", icon: "/github-icon.svg", component: "GitHub" },
   { id: "spotify", title: "Spotify", icon: "/spotify.png", component: "Spotify" },
-  { id: "calculator", title: "Calculator", icon: "/calculator.svg", component: "Calculator", defaultSize: { width: 320, height: 500 } },
+  { id: "calculator", title: "Calculator", icon: "/calculator.svg", component: "Calculator", defaultSize: { width: 250, height: 380 } },
 ]
 
 interface DockProps {
@@ -158,19 +185,23 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
   }, [])
 
   const handleAppClick = (app: (typeof dockApps)[0]) => {
+    playDockSound()
+
     if (app.id === "launchpad") {
       onLaunchpadClick()
       return
     }
 
-    const size = (app as any).defaultSize || { width: 800, height: 600 }
-    onAppClick({
+    const appWindow: any = {
       id: app.id,
       title: app.title,
       component: app.component,
-      position: { x: Math.random() * 200 + 100, y: Math.random() * 100 + 50 },
-      size,
-    })
+    }
+    // Only pass size for apps with custom small sizes (like calculator)
+    if ((app as any).defaultSize) {
+      appWindow.size = (app as any).defaultSize
+    }
+    onAppClick(appWindow)
 
     if (showMobileMenu) {
       setShowMobileMenu(false)

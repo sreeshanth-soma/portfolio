@@ -3,8 +3,7 @@
 import type React from "react";
 
 import { useState, useEffect } from "react";
-import { User, Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Wallpaper from "@/components/wallpaper";
 
@@ -21,6 +20,7 @@ export default function LoginScreen({
 }: LoginScreenProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
+  const [hint, setHint] = useState(false);
   const [time, setTime] = useState(new Date());
 
   // Update time every second
@@ -42,46 +42,46 @@ export default function LoginScreen({
     }
   };
 
-  const formattedTime = time.toLocaleTimeString("en-US", {
-    hour: "numeric",
+  const formattedTime = time.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
     minute: "2-digit",
-    hour12: true,
+    hour12: false,
   });
 
-  const formattedDate = time.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
+  const formattedDate = time.toLocaleDateString("en-GB", {
+    weekday: "short",
     day: "numeric",
+    month: "short",
   });
 
   return (
-    <div className="relative h-screen w-screen flex flex-col items-center justify-center overflow-hidden">
+    <div className="relative h-screen w-screen flex flex-col items-center overflow-hidden">
       <Wallpaper isDarkMode={isDarkMode} />
       <div className="absolute inset-0 bg-black/10" />
 
-      <div className="relative z-10 flex flex-col items-center mb-8">
-        <div className="text-white text-5xl font-light mb-2">
+      {/* Date & Time — large, top-center like real macOS */}
+      <div className="relative z-10 flex flex-col items-center mt-[8vh]">
+        <div className="text-white/90 text-lg font-medium tracking-wide">
+          {formattedDate}
+        </div>
+        <div
+          className="text-white font-semibold leading-none"
+          style={{ fontSize: "clamp(80px, 12vw, 150px)", letterSpacing: "-2px" }}
+        >
           {formattedTime}
         </div>
-        <div className="text-white text-xl font-light">{formattedDate}</div>
       </div>
 
-      <div className="relative z-10 flex flex-col items-center">
-        <div className="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center mb-4">
-          <span className="text-white text-5xl font-bold">S</span>
+      {/* User avatar, name & password — bottom area */}
+      <div className="relative z-10 flex flex-col items-center mt-auto mb-[12vh]">
+        <div className="w-16 h-16 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center mb-3">
+          <User className="w-8 h-8 text-white/70" />
         </div>
-        {/* <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center mb-4">
-          <Image
-            src="/letter-s.png"
-            alt="User avatar"
-            width={96}
-            height={96}
-            className="object-cover w-full h-full"
-          />
-        </div> */}
-        <h2 className="text-white text-2xl font-medium mb-6">Sreeshanth</h2>
+        <h2 className="text-white text-[17px] font-medium mb-1">Soma sreeshanth</h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col items-center">
+          <p className="text-white/50 text-[13px] mb-1">Touch ID or Enter Password</p>
+          <p className="text-white/60 text-[12px] mb-3">Hint: Who built this? (first name works)</p>
           <Input
             type="password"
             placeholder="Enter Password"
@@ -90,35 +90,20 @@ export default function LoginScreen({
               setPassword(e.target.value);
               setError(false);
             }}
-            className={`w-64 bg-white/20 backdrop-blur-md border-0 text-white placeholder:text-white/70 mb-2 ${
+            className={`w-56 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white text-sm placeholder:text-white/40 px-3 ${
               error ? "ring-2 ring-red-500" : ""
             }`}
           />
-
           {error && (
-            <p className="text-red-500 text-sm mb-2">Please enter a password</p>
+            <p className="text-red-500 text-xs mt-1">Please enter a password</p>
           )}
-          <Button
+          <button
             type="submit"
-            variant="outline"
-            className="mt-2 bg-white/20 backdrop-blur-md border-0 text-white hover:bg-white/30"
+            className="mt-3 px-6 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/80 text-[13px] font-medium hover:bg-white/20 transition-colors"
           >
             Login
-          </Button>
+          </button>
         </form>
-      </div>
-
-      <div className="fixed bottom-8 z-10">
-        <button
-          className="text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10"
-          onClick={onToggleDarkMode}
-        >
-          {isDarkMode ? (
-            <Sun className="w-6 h-6" />
-          ) : (
-            <Moon className="w-6 h-6" />
-          )}
-        </button>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const spotlightApps = [
   { id: "spotify", title: "Spotify", icon: "/spotify.png", component: "Spotify", category: "Applications" },
   { id: "snake", title: "Snake", icon: "/snake.png", component: "Snake", category: "Applications" },
   { id: "weather", title: "Weather", icon: "/weather.png", component: "Weather", category: "Applications" },
-  { id: "calculator", title: "Calculator", icon: "/calculator.svg", component: "Calculator", category: "Applications", defaultSize: { width: 320, height: 500 } },
+  { id: "calculator", title: "Calculator", icon: "/calculator.svg", component: "Calculator", category: "Applications", defaultSize: { width: 250, height: 380 } },
 ]
 
 const categories = ["All", "Applications", "Settings", "Help"]
@@ -69,14 +69,15 @@ export default function Spotlight({ onClose, onAppClick }: SpotlightProps) {
   }, [searchTerm, activeCategory])
 
   const handleAppClick = (app: (typeof spotlightApps)[0]) => {
-    const size = (app as any).defaultSize || { width: 800, height: 600 }
-    onAppClick({
+    const appWindow: any = {
       id: app.id,
       title: app.title,
       component: app.component,
-      position: { x: Math.random() * 200 + 100, y: Math.random() * 100 + 50 },
-      size,
-    })
+    }
+    if ((app as any).defaultSize) {
+      appWindow.size = (app as any).defaultSize
+    }
+    onAppClick(appWindow)
     onClose()
   }
 

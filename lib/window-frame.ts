@@ -12,22 +12,19 @@ export function getDefaultWindowFrame(openWindowCount = 0): Pick<AppWindow, "pos
   const viewportWidth = window.innerWidth
   const viewportHeight = window.innerHeight
   const availableHeight = viewportHeight - MENUBAR_HEIGHT - DOCK_HEIGHT
-  const maxWidth = Math.max(360, viewportWidth - EDGE_MARGIN * 2)
-  const maxHeight = Math.max(320, availableHeight - 12)
-  const minWidth = Math.min(980, maxWidth)
-  const preferredMaxWidth = Math.min(1320, maxWidth)
-  const minHeight = Math.min(780, maxHeight)
-  const preferredMaxHeight = Math.min(1080, maxHeight)
 
-  const width = clamp(Math.round(viewportWidth * 0.64), minWidth, preferredMaxWidth)
-  const height = clamp(Math.round(availableHeight * 0.87), minHeight, preferredMaxHeight)
+  const WIDGET_WIDTH = 280 // left widget column + gap
+  const RIGHT_ICONS = 100 // right desktop shortcuts
+  const usableWidth = viewportWidth - WIDGET_WIDTH - RIGHT_ICONS
+
+  const width = Math.max(600, Math.round(usableWidth * 0.92))
+  const height = Math.max(400, Math.round(availableHeight * 0.93))
 
   const cascadeOffset = Math.min(openWindowCount, 4) * 28
-  const maxX = Math.max(EDGE_MARGIN, viewportWidth - width - EDGE_MARGIN)
-  const maxY = Math.max(MENUBAR_HEIGHT + 12, viewportHeight - DOCK_HEIGHT - height - 12)
 
-  const x = clamp(Math.round((viewportWidth - width) * 0.18) + cascadeOffset, EDGE_MARGIN, maxX)
-  const y = clamp(Math.round(MENUBAR_HEIGHT + (availableHeight - height) / 2) + cascadeOffset, MENUBAR_HEIGHT + 12, maxY)
+  // Center window in the space between widgets and right icons
+  const x = Math.round(WIDGET_WIDTH + (usableWidth - width) / 2) + cascadeOffset
+  const y = Math.round(MENUBAR_HEIGHT + (availableHeight - height) / 2) + cascadeOffset
 
   return {
     position: { x, y },

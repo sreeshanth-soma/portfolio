@@ -10,6 +10,7 @@ import Window from "@/components/window"
 import Launchpad from "@/components/launchpad"
 import ControlCenter from "@/components/control-center"
 import Spotlight from "@/components/spotlight"
+import DesktopWidgets from "@/components/desktop-widgets"
 import { getDefaultWindowFrame } from "@/lib/window-frame"
 import type { AppWindow } from "@/types"
 
@@ -79,7 +80,15 @@ export default function Desktop({
 
     if (!isOpen) {
       const defaultFrame = getDefaultWindowFrame(openWindowsRef.current.length)
-      setOpenWindows((prev) => [...prev, { ...app, ...defaultFrame }])
+      const merged = { ...defaultFrame, ...app }
+      // Center apps that have a custom (smaller) size
+      if (app.size && (app.size.width < 600 || app.size.height < 400)) {
+        merged.position = {
+          x: Math.round((window.innerWidth - app.size.width) / 2),
+          y: Math.round((window.innerHeight - app.size.height) / 2) - 30,
+        }
+      }
+      setOpenWindows((prev) => [...prev, merged])
     }
 
     // Set as active window
@@ -163,6 +172,9 @@ export default function Desktop({
           isDarkMode={isDarkMode}
           activeWindow={activeWindowId ? openWindows.find((w) => w.id === activeWindowId) || null : null}
         />
+
+        {/* Desktop Widgets */}
+        <DesktopWidgets isDarkMode={isDarkMode} time={time} />
 
         {/* Desktop Shortcuts */}
         <div className="absolute top-10 right-6 flex flex-col items-center gap-5 z-10">

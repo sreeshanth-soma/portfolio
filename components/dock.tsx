@@ -18,6 +18,7 @@ const dockApps = [
   { id: "resume", title: "Resume", icon: "/preview.svg", component: "Resume" },
   { id: "github", title: "GitHub", icon: "/github-icon.svg", component: "GitHub" },
   { id: "spotify", title: "Spotify", icon: "/spotify.png", component: "Spotify" },
+  { id: "calculator", title: "Calculator", icon: "/calculator.svg", component: "Calculator", defaultSize: { width: 320, height: 500 } },
 ]
 
 interface DockProps {
@@ -162,12 +163,13 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
       return
     }
 
+    const size = (app as any).defaultSize || { width: 800, height: 600 }
     onAppClick({
       id: app.id,
       title: app.title,
       component: app.component,
       position: { x: Math.random() * 200 + 100, y: Math.random() * 100 + 50 },
-      size: { width: 800, height: 600 },
+      size,
     })
 
     if (showMobileMenu) {

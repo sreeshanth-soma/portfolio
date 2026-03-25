@@ -19,6 +19,8 @@ import Weather from "@/components/apps/weather"
 import Resume from "@/components/apps/resume"
 import Projects from "@/components/apps/projects"
 import Calculator from "@/components/apps/calculator"
+import Chatbot from "@/components/apps/chatbot"
+import Messages from "@/components/apps/messages"
 
 
 const componentMap: Record<string, React.ComponentType<{ isDarkMode?: boolean }>> = {
@@ -35,6 +37,8 @@ const componentMap: Record<string, React.ComponentType<{ isDarkMode?: boolean }>
   Resume,
   Projects,
   Calculator,
+  Chatbot,
+  Messages,
 }
 
 interface WindowProps {

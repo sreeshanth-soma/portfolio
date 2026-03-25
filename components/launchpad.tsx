@@ -18,6 +18,8 @@ const launchpadApps = [
   { id: "snake", title: "Snake", icon: "/snake.png", component: "Snake" },
   { id: "weather", title: "Weather", icon: "/weather.png", component: "Weather" },
   { id: "calculator", title: "Calculator", icon: "/calculator.svg", component: "Calculator", defaultSize: { width: 250, height: 380 } },
+  { id: "chatbot", title: "Grok", icon: "/grok.svg", component: "Chatbot" },
+  { id: "messages", title: "Messages", icon: "/messages.svg", component: "Messages" },
 ]
 
 interface LaunchpadProps {

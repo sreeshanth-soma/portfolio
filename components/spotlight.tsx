@@ -18,6 +18,8 @@ const spotlightApps = [
   { id: "snake", title: "Snake", icon: "/snake.png", component: "Snake", category: "Applications" },
   { id: "weather", title: "Weather", icon: "/weather.png", component: "Weather", category: "Applications" },
   { id: "calculator", title: "Calculator", icon: "/calculator.svg", component: "Calculator", category: "Applications", defaultSize: { width: 250, height: 380 } },
+  { id: "chatbot", title: "Grok", icon: "/grok.svg", component: "Chatbot", category: "Applications" },
+  { id: "messages", title: "Messages", icon: "/messages.svg", component: "Messages", category: "Applications" },
 ]
 
 const categories = ["All", "Applications", "Settings", "Help"]

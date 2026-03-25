@@ -46,6 +46,8 @@ const dockApps = [
   { id: "github", title: "GitHub", icon: "/github-icon.svg", component: "GitHub" },
   { id: "spotify", title: "Spotify", icon: "/spotify.png", component: "Spotify" },
   { id: "calculator", title: "Calculator", icon: "/calculator.svg", component: "Calculator", defaultSize: { width: 250, height: 380 } },
+  { id: "chatbot", title: "Grok", icon: "/grok.svg", component: "Chatbot" },
+  { id: "messages", title: "Messages", icon: "/messages.svg", component: "Messages" },
 ]
 
 interface DockProps {

@@ -47,6 +47,20 @@ export default function DesktopWidgets({ isDarkMode, time }: DesktopWidgetsProps
 
   return (
     <div className="absolute top-12 left-5 flex flex-col gap-3 z-[5] pointer-events-auto">
+      {/* Identity Widget */}
+      <div className={`${glassClass} rounded-2xl p-4 w-[310px] shadow-lg`}>
+        <div className="flex items-center gap-3">
+          <img src="/letter-s.png" alt="Soma" className="w-11 h-11 rounded-full ring-1 ring-white/20" />
+          <div>
+            <h2 className={`text-[13px] font-semibold ${textClass} leading-tight`}>Sreeshanth Soma</h2>
+            <p className={`text-[11px] ${subtextClass} leading-tight mt-0.5`}>AI & Backend Developer</p>
+          </div>
+        </div>
+        <p className={`text-[10px] ${subtextClass} mt-2.5 leading-relaxed`}>
+          Building AI systems & backend infra at Saryps Labs. Open-source contributor at OpenBroadcaster. CS undergrad, CVR College.
+        </p>
+      </div>
+
       {/* Row: Clock + Calendar side by side */}
       <div className="flex gap-3">
         {/* Clock Widget — macOS digital style with tick border */}

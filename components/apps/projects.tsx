@@ -11,7 +11,12 @@ const projects = [
   {
     id: 1,
     name: "Alephra",
-    description: "AI-powered healthcare assistant for medical report analysis. Integrates Gemini for contextual Q&A and structured clinical insights. Reduced TTS latency by 62% (20s to 7.7s) through asynchronous processing, dedicated embeddings server, and voice-level caching. Implements vector-based semantic retrieval using Pinecone for medical document search, supporting multilingual voice interaction in 10+ Indian languages.",
+    description: "Patients struggle to understand medical reports. Alephra fixes that — upload a report, ask questions in plain language, get structured clinical insights back.",
+    impact: [
+      "62% faster TTS — cut latency from 20s to 7.7s via async processing & voice-level caching",
+      "Semantic search across medical docs using Pinecone vector DB",
+      "Multilingual voice interaction in 10+ Indian languages",
+    ],
     tech: ["Next.js 14", "TypeScript", "Gemini API", "Pinecone", "Prisma", "PostgreSQL"],
     url: "https://alephra.com",
     github: "https://github.com/sreeshanth-soma/Alephra",
@@ -20,9 +25,42 @@ const projects = [
   },
   {
     id: 2,
+    name: "AI Voice Cloning Platform",
+    description: "Built at Saryps Labs — a platform that clones voices from 10-second audio samples. Supports TTS synthesis across 6 languages using Azure Custom Neural Voice.",
+    impact: [
+      "Backend APIs for audio upload, voice profile management, and TTS synthesis",
+      "Dockerized and deployed to Azure with autoscaling",
+      "Multilingual data model for voice profiles and generated audio assets",
+    ],
+    tech: ["Python", "Azure CNV", "Docker", "REST APIs", "PostgreSQL"],
+    icon: "🎙️",
+    color: "bg-purple-500",
+  },
+  {
+    id: 3,
+    name: "OpenBroadcaster",
+    description: "Open-source broadcast automation platform used by community radio stations globally. Contributed 10+ merged PRs spanning model, controller, UI, and database layers.",
+    impact: [
+      "Built advanced search with filtered queries and role-based saved searches",
+      "Designed k6 stress testing framework with automated threshold alerts",
+      "Building sample content system to reduce onboarding friction for new stations",
+    ],
+    tech: ["PHP", "MySQL", "JavaScript", "k6", "CI/CD"],
+    url: "https://openbroadcaster.com",
+    github: "https://github.com/openbroadcaster",
+    icon: "📡",
+    color: "bg-orange-500",
+  },
+  {
+    id: 4,
     name: "macOS Portfolio",
-    description: "Interactive macOS-style portfolio website with window management, dock, and multiple apps including Safari, Terminal, Notes, Calculator, and more.",
-    tech: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS"],
+    description: "This website — a full macOS desktop simulation with window management, dock with magnification, spotlight search, and 15+ working apps including an AI chatbot powered by Grok.",
+    impact: [
+      "Full window system — drag, resize, maximize, cascade positioning",
+      "Grok-powered chatbot trained on resume data",
+      "Optimized 55MB of assets down to ~2MB, responsive mobile experience",
+    ],
+    tech: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS", "Grok API"],
     url: "https://sreeshanthsoma.live",
     github: "https://github.com/sreeshanth-soma/portfolio",
     icon: "🖥️",
@@ -114,9 +152,21 @@ export default function Projects({ isDarkMode = true }: ProjectsProps) {
                 </div>
               </div>
 
-              <p className={`text-sm leading-relaxed mb-6 ${subtextColor}`}>
+              <p className={`text-sm leading-relaxed mb-4 ${subtextColor}`}>
                 {selectedProject.description}
               </p>
+
+              {(selectedProject as any).impact && (
+                <div className={`mb-6 space-y-2`}>
+                  <h3 className={`text-xs font-semibold uppercase tracking-wide ${subtextColor}`}>Key Impact</h3>
+                  {(selectedProject as any).impact.map((item: string, i: number) => (
+                    <div key={i} className={`flex items-start gap-2 text-sm ${subtextColor}`}>
+                      <span className="text-green-400 mt-0.5 shrink-0">&#x2713;</span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div className="flex gap-3">
                 {selectedProject.url && (

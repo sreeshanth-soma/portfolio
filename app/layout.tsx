@@ -3,7 +3,7 @@ import './globals.css'
 import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
-  title: 'Sreeshanth Soma | SDE & AI Systems Engineer',
+  title: 'Sreeshanth Soma | AI & Backend Developer',
   description:
     'Portfolio of Sreeshanth Soma — Software Development Engineer building production-grade AI systems and backend infrastructure. Skilled in Python, TypeScript, Django, Next.js, Azure, Docker, and RAG pipelines. Currently at Saryps Labs and contributing to OpenBroadcaster open source.',
   keywords: [
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://sreeshanthsoma.live',
-    title: 'Sreeshanth Soma | SDE & AI Systems Engineer',
+    title: 'Sreeshanth Soma | AI & Backend Developer',
     description:
       'Engineering student building production-grade AI systems and backend infrastructure. Explore projects, resume, and experience in an interactive macOS-style portfolio.',
     siteName: 'Sreeshanth Soma',
@@ -44,13 +44,13 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Sreeshanth Soma — SDE & AI Systems Engineer Portfolio',
+        alt: 'Sreeshanth Soma — AI & Backend Developer Portfolio',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sreeshanth Soma | SDE & AI Systems Engineer',
+    title: 'Sreeshanth Soma | AI & Backend Developer',
     description:
       'Engineering student building production-grade AI systems and backend infrastructure. Interactive macOS-style portfolio.',
     images: ['/og-image.png'],
@@ -85,7 +85,7 @@ const jsonLd = {
   image: "https://sreeshanthsoma.live/og-image.png",
   email: "sreeshanthsoma@gmail.com",
   telephone: "+917995648818",
-  jobTitle: "Software Development Engineer",
+  jobTitle: "AI & Backend Developer",
   description:
     "Engineering student building production-grade AI systems and backend infrastructure. SDE at Saryps Labs, open-source contributor at OpenBroadcaster.",
   address: {
@@ -174,7 +174,7 @@ export default function RootLayout({
 
         {/* Server-rendered SEO content — hidden visually but indexable by crawlers */}
         <div className="sr-only" aria-hidden="false">
-          <h1>Sreeshanth Soma — Software Development Engineer & AI Systems Engineer</h1>
+          <h1>Sreeshanth Soma — AI & Backend Developer</h1>
           <p>
             Sreeshanth Soma is an engineering student at CVR College of Engineering, Hyderabad,
             building production-grade AI systems and backend infrastructure. He currently works as

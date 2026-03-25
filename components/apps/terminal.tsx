@@ -210,7 +210,7 @@ export default function Terminal({ isDarkMode = true }: TerminalProps) {
           "Email: sreeshanthsoma@gmail.com",
           "GitHub: github.com/sreeshanth-soma",
           "LinkedIn: linkedin.com/in/sreeshanth-soma/",
-          "Website: sreeshanthsoma.dev",
+          "Website: sreeshanthsoma.live",
           "",
         ])
         break

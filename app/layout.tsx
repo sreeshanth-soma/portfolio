@@ -28,13 +28,13 @@ export const metadata: Metadata = {
     'Portfolio',
     'Hyderabad',
   ],
-  authors: [{ name: 'Sreeshanth Soma', url: 'https://sreeshanthsoma.dev' }],
+  authors: [{ name: 'Sreeshanth Soma', url: 'https://sreeshanthsoma.live' }],
   creator: 'Sreeshanth Soma',
-  metadataBase: new URL('https://sreeshanthsoma.dev'),
+  metadataBase: new URL('https://sreeshanthsoma.live'),
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://sreeshanthsoma.dev',
+    url: 'https://sreeshanthsoma.live',
     title: 'Sreeshanth Soma | SDE & AI Systems Engineer',
     description:
       'Engineering student building production-grade AI systems and backend infrastructure. Explore projects, resume, and experience in an interactive macOS-style portfolio.',
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     apple: '/letter-s.png',
   },
   alternates: {
-    canonical: 'https://sreeshanthsoma.dev',
+    canonical: 'https://sreeshanthsoma.live',
   },
 }
 

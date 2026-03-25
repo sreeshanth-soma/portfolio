@@ -23,7 +23,7 @@ const projects = [
     name: "macOS Portfolio",
     description: "Interactive macOS-style portfolio website with window management, dock, and multiple apps including Safari, Terminal, Notes, Calculator, and more.",
     tech: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS"],
-    url: "https://sreeshanthsoma.dev",
+    url: "https://sreeshanthsoma.live",
     github: "https://github.com/sreeshanth-soma/portfolio",
     icon: "🖥️",
     color: "bg-blue-500",

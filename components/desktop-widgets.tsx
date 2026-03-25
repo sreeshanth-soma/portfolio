@@ -135,7 +135,7 @@ export default function DesktopWidgets({ isDarkMode, time }: DesktopWidgetsProps
             { icon: Github, label: "GitHub", href: "https://github.com/sreeshanth-soma" },
             { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/in/sreeshanth-soma" },
             { icon: Mail, label: "Email", href: "mailto:sreeshanthsoma@gmail.com" },
-            { icon: Globe, label: "Portfolio", href: "https://sreeshanthsoma.dev" },
+            { icon: Globe, label: "Portfolio", href: "https://sreeshanthsoma.live" },
           ].map((link) => (
             <a
               key={link.label}
